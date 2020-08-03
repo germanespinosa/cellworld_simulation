@@ -31,6 +31,7 @@ struct Particle_filter {
     const cell_world::Cell &goal;
     Prey prey;
     Predator predator;
+    cell_world::Model model;
     std::vector<cell_world::Agent_public_state> public_particles;
     std::vector<Predator_state> internal_particles;
 };

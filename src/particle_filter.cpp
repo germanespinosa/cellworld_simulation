@@ -16,10 +16,14 @@ Particle_filter::Particle_filter(
         start_cell(start_cell),
         goal(goal),
         prey(start_cell),
-        predator(world_graph,visibility,paths){}
+        predator(world_graph,visibility,paths),
+        model(cells){
+    model.add_agent(prey);
+    model.add_agent(predator);
+}
 
 bool Particle_filter::create_particles(int count, int limit) {
-    
+
     return true;
 }
 

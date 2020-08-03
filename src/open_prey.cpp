@@ -1,4 +1,4 @@
-#include <agents/open_prey.h>
+#include <open_prey.h>
 
 Open_prey::Open_prey(cell_world::Cell &start, cell_world::Coordinates goal) :
     start_cell(start), goal(goal){

@@ -1,6 +1,6 @@
 #pragma once
 #include <cell_world.h>
-#include <agents/predator.h>
+#include <predator.h>
 
 struct Particle_filter {
     Particle_filter(const cell_world::Cell_group &, const cell_world::Graph &, const cell_world::Graph &, const cell_world::Paths&);

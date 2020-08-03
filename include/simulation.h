@@ -1,6 +1,6 @@
 #include <cell_world.h>
 #include <cell_world_tools.h>
-#include <agents/poi_prey.h>
+#include <poi_prey.h>
 
 struct Simulation_parameters : cell_world_tools::Parameters_builder {
     cell_world::World world;

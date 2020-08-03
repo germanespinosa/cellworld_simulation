@@ -1,6 +1,6 @@
 #pragma once
 #include <cell_world.h>
-#include <particle_filter/particle_filter.h>
+#include <particle_filter.h>
 
 struct Poi_prey_state : cell_world::Agent_internal_state {
 

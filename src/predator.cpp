@@ -2,7 +2,7 @@
 // Created by german on 7/31/20.
 //
 
-#include <agents/predator.h>
+#include <predator.h>
 
 Predator::Predator(
         const cell_world::Graph &world_graph,

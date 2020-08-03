@@ -1,4 +1,4 @@
-#include <agents/poi_prey.h>
+#include <poi_prey.h>
 
 Poi_prey::Poi_prey(const cell_world::Cell_group &cells,
                    const cell_world::Graph &world_graph,

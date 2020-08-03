@@ -6,5 +6,5 @@ int main(int argc, char **argv)
 {
     Simulation_parameters p;
     p.load(argc, argv);
-    cout << p << endl;
+    Simulation simulation(p);
 }

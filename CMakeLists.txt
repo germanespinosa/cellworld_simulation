@@ -7,16 +7,19 @@ project( cellworld_simulation
         DESCRIPTION "Cellworld simulation"
         LANGUAGES CXX)
 
-find_package(Json-cpp REQUIRED)
 find_package(Cellworld_tools REQUIRED)
 
 set (cellworld_simulation_files
         src/predator.cpp
+        src/poi_prey.cpp
         src/open_prey.cpp
-        src/simulation.cpp)
+        src/simulation.cpp
+        src/particle_filter.cpp)
 
 add_library( cellworld_simulation ${cellworld_simulation_files})
 
+
+message ("here ${CELLWORLD_TOOLS_LIBRARIES}")
 target_link_libraries ( cellworld_simulation ${CELLWORLD_TOOLS_LIBRARIES})
 
 target_include_directories(cellworld_simulation

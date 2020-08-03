@@ -11,9 +11,9 @@ struct Simulation_parameters : cell_world_tools::Parameters_builder {
     Parameters_definitions({
         Add_web_resource(world, ({"world"}));
         Add_web_resource(paths, ({"world","paths"}));
-        Add_value(prey_start);
-        Add_value(goal);
-        Add_value(predator_start);
+//        Add_value(prey_start);
+//        Add_value(goal);
+//        Add_value(predator_start);
     })
 };
 

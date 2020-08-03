@@ -14,6 +14,14 @@ Predator::Predator(
         paths(paths),
         start_cell(start_cell){}
 
+Predator::Predator(
+        const cell_world::Graph &world_graph,
+        const cell_world::Graph &visibility,
+        const cell_world::Paths &paths):
+        world_graph(world_graph),
+        visibility(visibility),
+        paths(paths){}
+
 const cell_world::Cell &Predator::start_episode() {
     return start_cell;
 }
@@ -29,3 +37,4 @@ cell_world::Agent_status_code Predator::update_state(const cell_world::Model_pub
 void Predator::end_episode(const cell_world::Model_public_state &) {
 
 }
+

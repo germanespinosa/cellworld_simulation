@@ -12,7 +12,7 @@ Poi_prey::Poi_prey(const cell_world::Cell_group &cells,
                    paths(paths),
                    start_cell(start_cell),
                    goal(goal),
-                   particle_filter(cells,world_graph,visibility,paths){ }
+                   particle_filter(cells,world_graph,visibility,paths, start_cell, goal){ }
 
 const cell_world::Cell &Poi_prey::start_episode() {
     return start_cell;

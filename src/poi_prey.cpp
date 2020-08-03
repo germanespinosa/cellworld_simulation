@@ -2,16 +2,19 @@
 
 Poi_prey::Poi_prey(const cell_world::Cell_group &cells,
                    const cell_world::Graph &world_graph,
+                   const cell_world::Graph &pois_graph,
                    const cell_world::Graph &visibility,
                    const cell_world::Paths &paths,
                    const cell_world::Cell &start_cell,
                    const cell_world::Cell &goal):
                    cells(cells),
+                   pois_graph(pois_graph),
                    world_graph(world_graph),
                    visibility(visibility),
                    paths(paths),
                    start_cell(start_cell),
                    goal(goal),
+                   model(cells),
                    particle_filter(cells,world_graph,visibility,paths, start_cell, goal){ }
 
 const cell_world::Cell &Poi_prey::start_episode() {

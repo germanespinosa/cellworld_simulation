@@ -19,12 +19,14 @@ struct Simulation_parameters : cell_world_tools::Parameters_builder {
 
 
 struct Simulation : cell_world::Model {
-    Simulation(Simulation_parameters &);
+    explicit Simulation(Simulation_parameters &);
 
     unsigned int run();
 
     cell_world::World world;
+    cell_world::Cell_group pois;
     cell_world::Graph world_graph;
+    cell_world::Graph poi_graph;
     cell_world::Cell_group cells;
     cell_world::Map map;
     cell_world::Paths paths;

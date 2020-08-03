@@ -21,7 +21,7 @@ struct Particle_filter {
                     const cell_world::Cell &start_cell,
                     const cell_world::Cell &goal);
 
-    bool create_particles (int, int);
+    unsigned int create_particles (int, int);
 
     const cell_world::Cell_group &cells;
     const cell_world::Graph &world_graph;
@@ -29,9 +29,13 @@ struct Particle_filter {
     const cell_world::Paths &paths;
     const cell_world::Cell &start_cell;
     const cell_world::Cell &goal;
+    const cell_world::Cell_group &predator_start_locations;
     Prey prey;
     Predator predator;
     cell_world::Model model;
     std::vector<cell_world::Agent_public_state> public_particles;
     std::vector<Predator_state> internal_particles;
+    std::vector<cell_world::Move> trajectory;
+
+    void _from_no_observation(int, int);
 };

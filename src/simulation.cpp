@@ -11,10 +11,10 @@ Simulation::Simulation(Simulation_parameters &sp) :
     map (cells),
     paths (world.create_paths(sp.paths)),
     visibility(world.create_graph(Json_create<Graph_builder>(Web_resource::from("graph").key(world.name).key("visibility").get()))),
-    model(cells),
+    Model(cells),
     prey(cells, world_graph, visibility, paths, map[sp.prey_start], map[sp.goal]),
     predator(world_graph, visibility, paths, map[sp.predator_start])
     {
-        model.add_agent(prey);
-        model.add_agent(predator);
+        add_agent(prey);
+        add_agent(predator);
     }

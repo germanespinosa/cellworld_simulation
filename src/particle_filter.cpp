@@ -17,14 +17,41 @@ Particle_filter::Particle_filter(
         goal(goal),
         prey(start_cell),
         predator(world_graph,visibility,paths),
-        model(cells){
+        model(cells),
+        predator_start_locations(visibility.invert()[start_cell]){
     model.add_agent(prey);
     model.add_agent(predator);
 }
 
-bool Particle_filter::create_particles(int count, int limit) {
+unsigned int Particle_filter::create_particles(int count, int limit) {
+    _from_no_observation(count, limit);
+    return public_particles.size();
+}
 
-    return true;
+void Particle_filter::_from_no_observation(int count, int limit) {
+    public_particles.clear();
+    auto &prey_cell = model.state.public_state.agents_state[0].cell;
+    auto &predator_cell = model.state.public_state.agents_state[1].cell;
+    auto &predator_state = model.state.public_state.agents_state[1];
+    for (int attempt = 0; public_particles.size() < count && attempt < limit; attempt++) {
+        auto &predator_start_cell = predator_start_locations.random_cell();
+        model.start_episode();
+        bool is_good = true;
+        for (auto move : trajectory) {
+            prey.move = move;
+            model.update(); // prey move
+            if (visibility[prey_cell].contains(predator_cell)) {
+                is_good = false;
+                break;
+            }
+            model.update(); // predator move
+            if (visibility[prey_cell].contains(predator_cell)) {
+                is_good = false;
+                break;
+            }
+        }
+        if (is_good) public_particles.push_back(predator_state);
+    }
 }
 
 const cell_world::Cell &Particle_filter::Prey::start_episode() {

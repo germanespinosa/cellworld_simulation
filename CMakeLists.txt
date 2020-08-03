@@ -1,0 +1,32 @@
+cmake_minimum_required( VERSION 3.13 )
+
+set(CMAKE_CXX_STANDARD 17)
+
+project( cellworld_simulation
+        VERSION 2019.1.0
+        DESCRIPTION "Cellworld simulation"
+        LANGUAGES CXX)
+
+find_package(Json-cpp REQUIRED)
+find_package(Cellworld_tools REQUIRED)
+
+set (cellworld_simulation_files
+        src/predator.cpp
+        src/open_prey.cpp
+        src/simulation.cpp)
+
+add_library( cellworld_simulation ${cellworld_simulation_files})
+
+target_link_libraries ( cellworld_simulation ${CELLWORLD_TOOLS_LIBRARIES})
+
+target_include_directories(cellworld_simulation
+        PUBLIC
+        include )
+
+add_executable(cellworld_run src/run.cpp)
+target_link_libraries( cellworld_run  cellworld_simulation)
+
+###
+### TESTS
+###
+find_package(CatchTests CONFIG QUIET)

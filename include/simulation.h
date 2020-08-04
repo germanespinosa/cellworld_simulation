@@ -1,5 +1,8 @@
+#pragma once
 #include <cell_world.h>
 #include <cell_world_tools.h>
+#include <rewards.h>
+#include <predator.h>
 #include <poi_prey.h>
 
 struct Simulation_parameters : cell_world_tools::Parameters_builder {
@@ -8,15 +11,16 @@ struct Simulation_parameters : cell_world_tools::Parameters_builder {
     cell_world::Coordinates prey_start;
     cell_world::Coordinates predator_start;
     cell_world::Coordinates goal;
+    Rewards rewards;
     Parameters_definitions({
         Add_web_resource(world, ({"world"}));
         Add_web_resource_from_table(path_type,"paths" ,({"world","path_type"}));
         Add_value(prey_start);
         Add_value(goal);
         Add_value(predator_start);
+        Add_value(rewards);
     })
 };
-
 
 struct Simulation {
     explicit Simulation(Simulation_parameters &);

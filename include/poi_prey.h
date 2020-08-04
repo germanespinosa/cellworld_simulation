@@ -1,5 +1,7 @@
 #pragma once
 #include <cell_world.h>
+#include <rewards.h>
+#include <predator.h>
 #include <particle_filter.h>
 
 struct Panning_prey : cell_world::Stateless_agent{

@@ -23,6 +23,8 @@ struct Particle_filter {
 
     unsigned int create_particles (int, int);
 
+    cell_world::Agent_public_state get_particle();
+
     const cell_world::Cell_group &cells;
     const cell_world::Graph &world_graph;
     const cell_world::Graph &visibility;

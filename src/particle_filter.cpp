@@ -54,6 +54,10 @@ void Particle_filter::_from_no_observation(int count, int limit) {
     }
 }
 
+cell_world::Agent_public_state Particle_filter::get_particle() {
+    return pick_random(public_particles);
+}
+
 const cell_world::Cell &Particle_filter::Prey::start_episode() {
     return start_cell;
 }

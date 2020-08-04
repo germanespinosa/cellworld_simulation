@@ -41,3 +41,8 @@ Simulation::Simulation(Simulation_parameters &sp) :
         model.add_agent(prey);
         model.add_agent(predator);
     }
+
+unsigned int Simulation::run() {
+    model.run();
+    return 1;
+}

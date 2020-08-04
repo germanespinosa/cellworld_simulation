@@ -5,11 +5,18 @@
 #include <particle_filter.h>
 
 struct Panning_prey : cell_world::Stateless_agent{
-    Panning_prey (const cell_world::Cell &, const cell_world::Cell &);
-    const cell_world::Cell &start_episode() override;
-    cell_world::Move get_move(const cell_world::Model_public_state &) override;
-    cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override;
-    void end_episode(const cell_world::Model_public_state &) override;
+    Panning_prey (const cell_world::Cell &start, const cell_world::Cell &goal) :
+            start_cell(start), goal(goal){
+    }
+    const cell_world::Cell &start_episode() override {
+        return start_cell;
+    };
+    cell_world::Move get_move(const cell_world::Model_public_state &) override {
+        return move;
+    };
+    cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override {
+        return cell_world::Running;
+    };
     const cell_world::Cell &start_cell;
     const cell_world::Cell &goal;
     cell_world::Move move;
@@ -30,6 +37,10 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     const cell_world::Cell &start_episode() override;
     cell_world::Move get_move(const cell_world::Model_public_state &) override;
     cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override;
+
+    bool process_state(const cell_world::Model_public_state &);
+    cell_world::Move plan (bool ,const cell_world::Model_public_state &);
+
     const cell_world::Cell_group &cells;
     const cell_world::Graph &pois_graph;
     const cell_world::Graph &world_graph;
@@ -41,4 +52,5 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     Panning_prey prey;
     Predator predator;
     Particle_filter particle_filter;
+    cell_world::Move move;
 };

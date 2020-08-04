@@ -31,9 +31,6 @@ cell_world::Agent_status_code Poi_prey::update_state(const cell_world::Model_pub
     return cell_world::Finished;
 }
 
-void Poi_prey::end_episode(const cell_world::Model_public_state &) {
-
-}
 
 Panning_prey::Panning_prey(const cell_world::Cell &start, const cell_world::Cell &goal) :
         start_cell(start), goal(goal){

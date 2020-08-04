@@ -70,9 +70,5 @@ cell_world::Agent_status_code Particle_filter::Prey::update_state(const Model_pu
     return Running;
 }
 
-void Particle_filter::Prey::end_episode(const Model_public_state &) {
-
-}
-
 Particle_filter::Prey::Prey(const Cell &start_cell):
     start_cell(start_cell){}

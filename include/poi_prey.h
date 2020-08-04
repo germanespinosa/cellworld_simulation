@@ -28,7 +28,6 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     const cell_world::Cell &start_episode() override;
     cell_world::Move get_move(const cell_world::Model_public_state &) override;
     cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override;
-    void end_episode(const cell_world::Model_public_state &) override;
     const cell_world::Cell_group &cells;
     const cell_world::Graph &pois_graph;
     const cell_world::Graph &world_graph;

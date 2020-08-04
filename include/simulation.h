@@ -11,15 +11,15 @@ struct Simulation_parameters : cell_world_tools::Parameters_builder {
     cell_world::Coordinates prey_start;
     cell_world::Coordinates predator_start;
     cell_world::Coordinates goal;
-    Reward rewards;
+    Reward reward;
     Parameters_definitions({
         Add_web_resource(world, ({"world"}));
         Add_web_resource_from_table(path_type,"paths" ,({"world","path_type"}));
         Add_value(prey_start);
         Add_value(goal);
         Add_value(predator_start);
-        Add_value(rewards);
-    })
+        Add_web_resource(reward, ({"reward"}));
+   })
 };
 
 struct Simulation {

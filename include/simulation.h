@@ -1,7 +1,7 @@
 #pragma once
 #include <cell_world.h>
 #include <cell_world_tools.h>
-#include <rewards.h>
+#include <reward.h>
 #include <predator.h>
 #include <poi_prey.h>
 
@@ -36,6 +36,7 @@ struct Simulation {
     cell_world::Paths paths;
     cell_world::Graph visibility;
     cell_world::Model model;
+    Reward reward;
     Poi_prey prey;
     Predator predator;
 };

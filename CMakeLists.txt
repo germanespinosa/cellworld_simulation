@@ -11,6 +11,7 @@ find_package(Cellworld_tools REQUIRED)
 
 set (cellworld_simulation_files
         src/predator.cpp
+        src/planner.cpp
         src/poi_prey.cpp
         src/simulation.cpp
         src/particle_filter.cpp

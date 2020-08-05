@@ -39,35 +39,46 @@ Simulation::Simulation(Simulation_parameters &sp) :
     planning_parameters (sp.planning),
     prey (cells, world_graph, pois, poi_graph, visibility, paths, map[sp.prey_start], map[sp.goal], sp.planning),
     predator (world_graph, visibility, paths, map[sp.predator_start])
-    {
-        model.add_agent(prey);
-        model.add_agent(predator);
-    }
+{
+    model.add_agent(prey);
+    model.add_agent(predator);
+}
+
+
+struct Data : json_cpp::Json_object{
+    Data () = default;
+    Data (Model_public_state &state,
+          Poi_prey_state & prey_state,
+          Predator_state & predator_state) :
+            iteration(state.agents_state[0].iteration),
+            prey(state.agents_state[0].cell.coordinates),
+            predator(state.agents_state[1].cell.coordinates),
+            prey_state(prey_state),
+            predator_state(predator_state){}
+    unsigned int iteration;
+    Coordinates prey;
+    Coordinates predator;
+    Poi_prey_state prey_state;
+    Predator_state predator_state;
+    Json_object_members({
+                            Add_member(iteration);
+                            Add_member(prey);
+                            Add_member(predator);
+                            Add_member(prey_state);
+                            Add_member(predator_state);
+                        })
+};
 
 
 unsigned int Simulation::run() {
-    struct Data : json_cpp::Json_object{
-        Data () = default;
-        Data (unsigned int iteration,
-              Coordinates prey,
-              Coordinates predator) : iteration(iteration), prey(prey), predator(predator) {}
-        unsigned int iteration;
-        Coordinates prey;
-        Coordinates predator;
-        Json_object_members({
-            Add_member(iteration);
-            Add_member(prey);
-            Add_member(predator);
-        })
-    };
     model.start_episode();
     cout << "prey: " << model.state.public_state.agents_state[0].cell.coordinates << endl;
     cout << "predator: " << model.state.public_state.agents_state[1].cell.coordinates << endl;
     do {
         if (!model.state.public_state.current_turn) {
-            Data data {model.state.public_state.agents_state[0].iteration,
-                       model.state.public_state.agents_state[0].cell.coordinates,
-                       model.state.public_state.agents_state[1].cell.coordinates};
+            Data data {model.state.public_state,
+                       prey.internal_state(),
+                       predator.internal_state()};
             cout << data << endl;
         }
     } while (model.update());

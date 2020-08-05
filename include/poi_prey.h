@@ -14,6 +14,12 @@ struct Poi_prey_state : cell_world::Agent_internal_state {
     cell_world::Move move;
     cell_world::Coordinates coordinates;
     double estimated_reward;
+    Json_object_members({
+        Add_member(status);
+        Add_member(move);
+        Add_member(coordinates);
+        Add_member(estimated_reward);
+    })
 };
 
 struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {

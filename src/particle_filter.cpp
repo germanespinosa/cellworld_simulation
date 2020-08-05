@@ -41,10 +41,6 @@ unsigned int Particle_filter::create_particles() {
 }
 
 void Particle_filter::_from_no_observation() {
-//    auto &prey_cell = model.state.public_state.agents_state[0].cell;
-//    auto &predator_cell = model.state.public_state.agents_state[1].cell;
-//    auto &predator_state = model.state.public_state.agents_state[1];
-//    auto &predator_internal_state = predator.internal_state();
     for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
         predator.start_cell = predator_start_locations.random_cell();
         model.start_episode();
@@ -72,10 +68,6 @@ void Particle_filter::record_observation(const Model_public_state &state) {
 }
 
 void Particle_filter::_from_last_observation() {
-//    auto &prey_cell = model.state.public_state.agents_state[0].cell;
-//    auto &predator_cell = model.state.public_state.agents_state[1].cell;
-//    auto &predator_state = model.state.public_state.agents_state[1];
-//    auto &predator_internal_state = predator.internal_state();
     for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
         model.set_public_state(last_observation);
         bool is_good = true;

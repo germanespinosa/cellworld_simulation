@@ -57,7 +57,8 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     Predator predator;
     Particle_filter particle_filter;
 
-
+    cell_world::Agent_status_code status;
     cell_world::Move move;
+    cell_world::Coordinates coordinates;
     double estimated_reward;
 };

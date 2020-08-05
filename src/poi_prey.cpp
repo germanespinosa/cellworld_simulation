@@ -27,18 +27,26 @@ Poi_prey::Poi_prey(const Cell_group &cells,
                    particle_filter(cells,world_graph,visibility,paths, start_cell, goal){ }
 
 const Cell &Poi_prey::start_episode() {
+    status = cell_world::Running;
     return start_cell;
 }
 
 Move Poi_prey::get_move(const Model_public_state &state) {
     bool contact = process_state (state);
-    move = plan(contact, state);
+    if (status == Running) {
+        move = plan(contact, state);
+    } else {
+        move = {0,0};
+    }
     return move;
 }
 
 Agent_status_code Poi_prey::update_state(const Model_public_state &state) {
-    if (!process_state (state)) particle_filter.trajectory.push_back(move);
-    return cell_world::Finished;
+    if (status == Running) {
+        if (!process_state(state)) particle_filter.trajectory.push_back(move);
+        coordinates = state.agents_state[0].cell.coordinates;
+    }
+    return status;
 }
 
 bool Poi_prey::process_state(const Model_public_state &state) {
@@ -48,6 +56,7 @@ bool Poi_prey::process_state(const Model_public_state &state) {
     auto &predator_cell = state.agents_state[1].cell;
     bool contact = visibility[prey_cell].contains(predator_cell);
     if (contact) particle_filter.record_observation(state);
+    if (prey_cell == goal || predator_cell == prey_cell) status = Finished;
     return contact;
 }
 

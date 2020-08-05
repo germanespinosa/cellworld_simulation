@@ -23,7 +23,6 @@ struct Panning_prey : cell_world::Stateless_agent{
 };
 
 struct Poi_prey_state : cell_world::Agent_internal_state {
-
 };
 
 struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
@@ -58,4 +57,6 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     Predator predator;
     Particle_filter particle_filter;
     cell_world::Move move;
+
+    double estimated_reward;
 };

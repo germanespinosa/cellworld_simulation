@@ -105,5 +105,6 @@ Move Poi_prey::plan(bool use_full_state, const Model_public_state &current_state
             best_option = option_index;
         }
     }
+    estimated_reward = best_reward;
     return paths.get_move(mps.agents_state[0].cell, options[best_option]);
 }

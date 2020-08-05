@@ -32,7 +32,8 @@ const Cell &Poi_prey::start_episode() {
 
 Move Poi_prey::get_move(const Model_public_state &state) {
     bool contact = process_state (state);
-    return plan(contact, state);
+    move = plan(contact, state);
+    return move;
 }
 
 Agent_status_code Poi_prey::update_state(const Model_public_state &state) {

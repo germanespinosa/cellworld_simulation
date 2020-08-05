@@ -56,7 +56,8 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     Panning_prey prey;
     Predator predator;
     Particle_filter particle_filter;
-    cell_world::Move move;
 
+
+    cell_world::Move move;
     double estimated_reward;
 };

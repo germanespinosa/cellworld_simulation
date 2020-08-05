@@ -27,26 +27,26 @@ Poi_prey::Poi_prey(const Cell_group &cells,
                    particle_filter(cells,world_graph,visibility,paths, start_cell, goal){ }
 
 const Cell &Poi_prey::start_episode() {
-    status = cell_world::Running;
+    internal_state().status = cell_world::Running;
     return start_cell;
 }
 
 Move Poi_prey::get_move(const Model_public_state &state) {
     bool contact = process_state (state);
-    if (status == Running) {
-        move = plan(contact, state);
+    if (internal_state().status == Running) {
+        internal_state().move = plan(contact, state);
     } else {
-        move = {0,0};
+        internal_state().move = {0,0};
     }
-    return move;
+    return internal_state().move;
 }
 
 Agent_status_code Poi_prey::update_state(const Model_public_state &state) {
-    if (status == Running) {
-        if (!process_state(state)) particle_filter.trajectory.push_back(move);
-        coordinates = state.agents_state[0].cell.coordinates;
+    if (internal_state().status == Running) {
+        if (!process_state(state)) particle_filter.trajectory.push_back(internal_state().move);
+        internal_state().coordinates = state.agents_state[0].cell.coordinates;
     }
-    return status;
+    return internal_state().status;
 }
 
 bool Poi_prey::process_state(const Model_public_state &state) {
@@ -56,7 +56,7 @@ bool Poi_prey::process_state(const Model_public_state &state) {
     auto &predator_cell = state.agents_state[1].cell;
     bool contact = visibility[prey_cell].contains(predator_cell);
     if (contact) particle_filter.record_observation(state);
-    if (prey_cell == goal || predator_cell == prey_cell) status = Finished;
+    if (prey_cell == goal || predator_cell == prey_cell) internal_state().status = Finished;
     return contact;
 }
 
@@ -115,6 +115,6 @@ Move Poi_prey::plan(bool use_full_state, const Model_public_state &current_state
             best_option = (int)option_index;
         }
     }
-    estimated_reward = best_reward;
+    internal_state().estimated_reward = best_reward;
     return paths.get_move(mps.agents_state[0].cell, options[best_option]);
 }

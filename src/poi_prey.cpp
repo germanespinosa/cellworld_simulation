@@ -112,7 +112,7 @@ Move Poi_prey::plan(bool use_full_state, const Model_public_state &current_state
         double current_option_reward = option_reward_acum / option_counter;
         if (current_option_reward > best_reward || best_option == Not_found){
             best_reward = current_option_reward;
-            best_option = option_index;
+            best_option = (int)option_index;
         }
     }
     estimated_reward = best_reward;

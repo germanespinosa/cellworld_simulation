@@ -3,6 +3,7 @@
 using namespace cell_world;
 using namespace cell_world_tools;
 using namespace json_cpp;
+using namespace std;
 
 Simulation::Simulation(Simulation_parameters &sp) :
     world ( sp.world ),
@@ -43,7 +44,35 @@ Simulation::Simulation(Simulation_parameters &sp) :
         model.add_agent(predator);
     }
 
+
 unsigned int Simulation::run() {
-    model.run();
+    struct Data : json_cpp::Json_object{
+        Data () = default;
+        Data (unsigned int iteration,
+              Coordinates prey,
+              Coordinates predator) : iteration(iteration), prey(prey), predator(predator) {}
+        unsigned int iteration;
+        Coordinates prey;
+        Coordinates predator;
+        Json_object_members({
+            Add_member(iteration);
+            Add_member(prey);
+            Add_member(predator);
+        })
+    };
+    model.start_episode();
+    cout << "prey: " << model.state.public_state.agents_state[0].cell.coordinates << endl;
+    cout << "predator: " << model.state.public_state.agents_state[1].cell.coordinates << endl;
+    do {
+        if (!model.state.public_state.current_turn) {
+            Data data {model.state.public_state.agents_state[0].iteration,
+                       model.state.public_state.agents_state[0].cell.coordinates,
+                       model.state.public_state.agents_state[1].cell.coordinates};
+            cout << data << endl;
+        }
+    } while (model.update());
+    cout << "prey: " << model.state.public_state.agents_state[0].cell.coordinates << endl;
+    cout << "predator: " << model.state.public_state.agents_state[1].cell.coordinates << endl;
+    model.end_episode();
     return 1;
 }

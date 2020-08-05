@@ -1,24 +1,6 @@
 #include <reward.h>
 #include <particle_filter.h>
 
-struct Panning_prey : cell_world::Stateless_agent{
-    Panning_prey (const cell_world::Cell &start, const cell_world::Cell &goal) :
-            start_cell(start), goal(goal){
-    }
-    const cell_world::Cell &start_episode() override {
-        return start_cell;
-    };
-    cell_world::Move get_move(const cell_world::Model_public_state &) override {
-        return move;
-    };
-    cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override {
-        return cell_world::Running;
-    };
-    const cell_world::Cell &start_cell;
-    const cell_world::Cell &goal;
-    cell_world::Move move;
-};
-
 struct Planning_parameters : json_cpp::Json_object {
     unsigned int particles;
     unsigned int attempts;
@@ -33,6 +15,24 @@ struct Planning_parameters : json_cpp::Json_object {
 };
 
 struct Planner{
+    struct Panning_prey : cell_world::Stateless_agent{
+        Panning_prey (const cell_world::Cell &start, const cell_world::Cell &goal) :
+                start_cell(start), goal(goal){
+        }
+        const cell_world::Cell &start_episode() override {
+            return start_cell;
+        };
+        cell_world::Move get_move(const cell_world::Model_public_state &) override {
+            return move;
+        };
+        cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override {
+            return cell_world::Running;
+        };
+        const cell_world::Cell &start_cell;
+        const cell_world::Cell &goal;
+        cell_world::Move move;
+    };
+
     Planner(const Planning_parameters &,
             const Particle_filter &,
             const cell_world::Graph &,

@@ -23,6 +23,11 @@ struct Panning_prey : cell_world::Stateless_agent{
 };
 
 struct Poi_prey_state : cell_world::Agent_internal_state {
+    Poi_prey_state():
+        status(),
+        move(),
+        coordinates(),
+        estimated_reward(0){}
     cell_world::Agent_status_code status;
     cell_world::Move move;
     cell_world::Coordinates coordinates;

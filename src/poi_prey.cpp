@@ -24,10 +24,14 @@ Poi_prey::Poi_prey(const Cell_group &cells,
                    model(cells),
                    prey(start_cell, goal),
                    predator(world_graph, visibility, paths),
-                   particle_filter(cells,world_graph,visibility,paths, start_cell, goal){ }
+                   particle_filter(cells,world_graph,visibility,paths, start_cell, goal){
+    model.add_agent(prey);
+    model.add_agent(predator);
+}
 
 const Cell &Poi_prey::start_episode() {
     internal_state().status = cell_world::Running;
+    internal_state().coordinates = start_cell.coordinates;
     return start_cell;
 }
 

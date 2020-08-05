@@ -101,8 +101,8 @@ Move Poi_prey::plan(bool use_full_state, const Model_public_state &current_state
         } else {
             current_reward = reward.compute(Fail, steps);
         }
-       option_reward_acum += current_reward;
-        option_counter ++;
+        option_reward_acum += current_reward;
+        option_counter++;
     }
     double best_reward;
     int best_option = Not_found;

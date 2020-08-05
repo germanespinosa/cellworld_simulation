@@ -11,22 +11,23 @@ Poi_prey::Poi_prey(const Cell_group &cells,
                    const Paths &paths,
                    const Cell &start_cell,
                    const Cell &goal,
-                   const Reward &reward):
-                   cells(cells),
-                   pois(pois),
-                   pois_graph(pois_graph),
-                   world_graph(world_graph),
-                   visibility(visibility),
-                   paths(paths),
-                   start_cell(start_cell),
-                   goal(goal),
-                   reward(reward),
-                   model(cells),
-                   prey(start_cell, goal),
-                   predator(world_graph, visibility, paths),
-                   particle_filter(cells,world_graph,visibility,paths, start_cell, goal){
-    model.add_agent(prey);
-    model.add_agent(predator);
+                   const Planning_parameters &planning):
+        cells(cells),
+        pois(pois),
+        pois_graph(pois_graph),
+        world_graph(world_graph),
+        visibility(visibility),
+        paths(paths),
+        start_cell(start_cell),
+        goal(goal),
+        planning(planning),
+        planning_model(cells),
+        prey(start_cell, goal),
+        predator(world_graph, visibility, paths),
+        particle_filter(cells,world_graph,visibility,paths, start_cell, goal){
+    planning_model.add_agent(prey);
+    planning_model.add_agent(predator);
+    planning_model.start_episode();
 }
 
 const Cell &Poi_prey::start_episode() {
@@ -66,22 +67,22 @@ bool Poi_prey::process_state(const Model_public_state &state) {
 
 Move Poi_prey::plan(bool use_full_state, const Model_public_state &current_state) {
     Model_public_state mps = current_state;
-    auto &prey_sate = model.state.public_state.agents_state[0];
+    auto &prey_sate = planning_model.state.public_state.agents_state[0];
     auto &prey_cell = prey_sate.cell;
-    auto &predator_sate = model.state.public_state.agents_state[1];
+    auto &predator_sate = planning_model.state.public_state.agents_state[1];
     auto &predator_cell = predator_sate.cell;
 
-    if (!use_full_state) particle_filter.create_particles(500,5000);
+    if (!use_full_state) particle_filter.create_particles(planning.particles, planning.attempts);
 
     Cell_group options = pois_graph[prey_cell];
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
 
-   for (unsigned int t = 0; t < 1000; t++){
+   for (unsigned int t = 0; t < planning.roll_outs; t++){
         // if predator location is unknown, replace the predator location
         // with a particle from the filter
         if (!use_full_state) mps.agents_state[1] = particle_filter.get_particle();
-        model.set_public_state(mps);
+        planning_model.set_public_state(mps);
         unsigned int option_index = pick_random_index (options);
         Cell option =  options[option_index]; // select a random option
         double &option_reward_acum = options_rewards_acum[option_index];
@@ -89,21 +90,21 @@ Move Poi_prey::plan(bool use_full_state, const Model_public_state &current_state
 
         while (true){
             prey.move = paths.get_move(prey_cell, option); //get the move from the path
-            model.update(); // execute the move
+            planning_model.update(); // execute the move
             if (prey_cell == goal ) break; // if the prey wins stop;
             if (prey_cell == option) { // if the prey reaches the current option
                 option = pois_graph[prey_cell].random_cell(); // it selects a new option
             }
-            model.update(); // predator moves
+            planning_model.update(); // predator moves
             if (prey_cell == predator_cell ) break; // the predator wins
-            if (model.state.public_state.iterations == predator_sate.iteration) break; // neither agent wins
+            if (planning_model.state.public_state.iterations == predator_sate.iteration) break; // neither agent wins
         }
         double current_reward;
         unsigned int steps = prey_sate.iteration - mps.agents_state[0].iteration;
         if (prey_sate.cell == goal) {
-            current_reward = reward.compute(Success, steps);
+            current_reward = planning.reward.compute(Success, steps);
         } else {
-            current_reward = reward.compute(Fail, steps);
+            current_reward = planning.reward.compute(Fail, steps);
         }
         option_reward_acum += current_reward;
         option_counter++;

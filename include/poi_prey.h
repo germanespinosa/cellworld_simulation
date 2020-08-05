@@ -4,6 +4,20 @@
 #include <predator.h>
 #include <particle_filter.h>
 
+struct Planning_parameters : json_cpp::Json_object {
+    unsigned int particles;
+    unsigned int attempts;
+    unsigned int roll_outs;
+    Reward reward;
+
+    Json_object_members({
+        Add_member(particles);
+        Add_member(attempts);
+        Add_member(roll_outs);
+        Add_member(reward);
+    })
+};
+
 struct Panning_prey : cell_world::Stateless_agent{
     Panning_prey (const cell_world::Cell &start, const cell_world::Cell &goal) :
             start_cell(start), goal(goal){
@@ -43,7 +57,7 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
              const cell_world::Paths &,
              const cell_world::Cell &,
              const cell_world::Cell &,
-             const Reward &);
+             const Planning_parameters &);
     const cell_world::Cell &start_episode() override;
     cell_world::Move get_move(const cell_world::Model_public_state &) override;
     cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override;
@@ -59,9 +73,9 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     const cell_world::Paths &paths;
     const cell_world::Cell &start_cell;
     const cell_world::Cell &goal;
-    const Reward reward;
+    const Planning_parameters &planning;
 
-    cell_world::Model model;
+    cell_world::Model planning_model;
     Panning_prey prey;
     Predator predator;
     Particle_filter particle_filter;

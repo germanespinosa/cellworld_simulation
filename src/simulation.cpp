@@ -35,8 +35,8 @@ Simulation::Simulation(Simulation_parameters &sp) :
                 )
     ),
     model (cells),
-    reward (sp.reward),
-    prey (cells, world_graph, pois, poi_graph, visibility, paths, map[sp.prey_start], map[sp.goal], sp.reward),
+    planning_parameters (sp.planning),
+    prey (cells, world_graph, pois, poi_graph, visibility, paths, map[sp.prey_start], map[sp.goal], sp.planning),
     predator (world_graph, visibility, paths, map[sp.predator_start])
     {
         model.add_agent(prey);

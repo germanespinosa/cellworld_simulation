@@ -3,17 +3,23 @@
 
 enum Result{
     Success,
-    Fail
+    Fail,
+    Unknown
 };
 
 struct Reward : json_cpp::Json_object{
 
     double compute (Result, unsigned int) const;
 
-    double success, fail, step, discount;
+    double success;
+    double fail;
+    double unknown;
+    double step;
+    double discount;
     Json_object_members({
                             Add_member(success);
                             Add_member(fail);
+                            Add_member(unknown);
                             Add_member(step);
                             Add_member(discount);
                         })

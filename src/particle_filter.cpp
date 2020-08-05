@@ -23,7 +23,7 @@ Particle_filter::Particle_filter(
     model.add_agent(predator);
 }
 
-unsigned int Particle_filter::create_particles(int count, int limit) {
+unsigned int Particle_filter::create_particles(unsigned int count, unsigned int limit) {
     if (last_observation.agents_state.empty()) {
         _from_no_observation(count, limit); // random start
     } else {
@@ -32,7 +32,7 @@ unsigned int Particle_filter::create_particles(int count, int limit) {
     return public_particles.size();
 }
 
-void Particle_filter::_from_no_observation(int count, int limit) {
+void Particle_filter::_from_no_observation(unsigned int count, unsigned int limit) {
     public_particles.clear();
     auto &prey_cell = model.state.public_state.agents_state[0].cell;
     auto &predator_cell = model.state.public_state.agents_state[1].cell;
@@ -68,7 +68,7 @@ void Particle_filter::record_observation(const Model_public_state &state) {
     trajectory.clear(); // clears the trajectory.
 }
 
-void Particle_filter::_from_last_observation(int count, int limit) {
+void Particle_filter::_from_last_observation(unsigned int count, unsigned int limit) {
     public_particles.clear();
     auto &prey_cell = model.state.public_state.agents_state[0].cell;
     auto &predator_cell = model.state.public_state.agents_state[1].cell;

@@ -10,6 +10,9 @@ double Reward::compute(Result result, unsigned int steps) const {
         case Fail:
             base_reward = fail;
             break;
+        case Unknown:
+            base_reward = unknown;
+            break;
     }
     if ( step ) base_reward += step  * (double) steps;
     if ( discount != 1 ) base_reward *= pow(discount, steps);

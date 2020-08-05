@@ -11,14 +11,14 @@ struct Simulation_parameters : cell_world_tools::Parameters_builder {
     cell_world::Coordinates prey_start;
     cell_world::Coordinates predator_start;
     cell_world::Coordinates goal;
-    Reward reward;
+    Planning_parameters planning;
     Parameters_definitions({
         Add_web_resource(world, ({"world"}));
         Add_web_resource_from_table(path_type,"paths" ,({"world","path_type"}));
         Add_value(prey_start);
         Add_value(goal);
         Add_value(predator_start);
-        Add_web_resource(reward, ({"reward"}));
+        Add_web_resource(planning, ({"planning"}));
    })
 };
 
@@ -36,7 +36,7 @@ struct Simulation {
     cell_world::Paths paths;
     cell_world::Graph visibility;
     cell_world::Model model;
-    Reward reward;
+    Planning_parameters planning_parameters;
     Poi_prey prey;
     Predator predator;
 };

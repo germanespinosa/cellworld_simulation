@@ -20,7 +20,7 @@ struct Particle_filter {
                     const cell_world::Cell &start_cell,
                     const cell_world::Cell &goal);
 
-    unsigned int create_particles (int, int);
+    unsigned int create_particles (unsigned int, unsigned int);
     void record_observation(const cell_world::Model_public_state &state);
 
     cell_world::Agent_public_state get_particle();
@@ -41,6 +41,6 @@ struct Particle_filter {
 
     cell_world::Model_public_state last_observation;
 private:
-    void _from_no_observation(int, int);
-    void _from_last_observation(int, int);
+    void _from_no_observation(unsigned int, unsigned int);
+    void _from_last_observation(unsigned int, unsigned int);
 };

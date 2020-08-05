@@ -6,12 +6,14 @@ using namespace std;
 Planner::Planner(const Planning_parameters &parameters,
                  const Particle_filter &filter,
                  const Graph &world_graph,
+                 const Graph &pois_graph,
                  const Graph &visibility,
                  const Paths &paths,
                  const Cell &start_cell,
                  const Cell &goal) :
                  parameters(parameters),
                  filter(filter),
+                 pois_graph(pois_graph),
                  paths(paths),
                  model(world_graph.cells),
                  prey(start_cell,goal),
@@ -22,23 +24,23 @@ Planner::Planner(const Planning_parameters &parameters,
     model.start_episode();
 }
 
-Move Planner::get_best_move(bool use_full_state, const Model_public_state &current_state) {
+Move Planner::get_best_move(const Model_public_state &current_state,
+                            double &estimated_reward,
+                            const vector<Particle> &particles) {
     Model_public_state mps = current_state;
     auto &prey_sate = model.state.public_state.agents_state[0];
     auto &prey_cell = prey_sate.cell;
     auto &predator_sate = model.state.public_state.agents_state[1];
     auto &predator_cell = predator_sate.cell;
 
-    if (!use_full_state) particle_filter.create_particles(planning.particles, planning.attempts);
-
     Cell_group options = pois_graph[prey_cell];
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
 
-    for (unsigned int t = 0; t < planning.roll_outs; t++){
-        // if predator location is unknown, replace the predator location
-        // with a particle from the filter
-        if (!use_full_state) mps.agents_state[1] = particle_filter.get_particle();
+    for (unsigned int t = 0; t < parameters.roll_outs; t++){
+        // if the planner has particles it uses it
+        // otherwise it uses the actual location of the predator
+        if (!particles.empty()) mps.agents_state[1] = pick_random(particles).public_state;
         model.set_public_state(mps);
         unsigned int option_index = pick_random_index (options);
         Cell option =  options[option_index]; // select a random option
@@ -58,10 +60,10 @@ Move Planner::get_best_move(bool use_full_state, const Model_public_state &curre
         }
         double current_reward;
         unsigned int steps = prey_sate.iteration - mps.agents_state[0].iteration;
-        if (prey_sate.cell == goal) {
-            current_reward = planning.reward.compute(Success, steps);
+        if (prey_sate.cell == prey.goal) {
+            current_reward = parameters.reward.compute(Success, steps);
         } else {
-            current_reward = planning.reward.compute(Fail, steps);
+            current_reward = parameters.reward.compute(Fail, steps);
         }
         option_reward_acum += current_reward;
         option_counter++;
@@ -77,7 +79,12 @@ Move Planner::get_best_move(bool use_full_state, const Model_public_state &curre
             best_option = (int)option_index;
         }
     }
-    internal_state().estimated_reward = best_reward;
+    estimated_reward = best_reward;
     return paths.get_move(mps.agents_state[0].cell, options[best_option]);
+}
+
+cell_world::Move Planner::get_best_move(const Model_public_state &current_state,
+                                        double &estimated_reward) {
+    return get_best_move(current_state, estimated_reward, {});
 }
 

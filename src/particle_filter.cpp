@@ -8,7 +8,9 @@ Particle_filter::Particle_filter(
         const Graph &visibility,
         const Paths &paths,
         const Cell &start_cell,
-        const Cell &goal) :
+        const Cell &goal,
+        unsigned int particle_count,
+        unsigned int attempts_limit) :
         cells(cells),
         world_graph(world_graph),
         visibility(visibility),
@@ -17,50 +19,51 @@ Particle_filter::Particle_filter(
         goal(goal),
         prey(start_cell),
         predator(world_graph,visibility,paths),
-        model(cells),
-        predator_start_locations(visibility.invert()[start_cell]){
-    model.add_agent(prey);
-    model.add_agent(predator);
-}
+        model(Model(cells).add_agent(prey).add_agent(predator)),
+        predator_start_locations(visibility.invert()[start_cell]),
+        particle_count(particle_count),
+        attempts_limit(attempts_limit),
+        _prey_cell (prey.public_state().cell),
+        _predator_state(predator.public_state()),
+        _predator_cell(_predator_state.cell),
+        _predator_internal_state(predator.internal_state()){}
 
-unsigned int Particle_filter::create_particles(unsigned int count, unsigned int limit) {
-    if (last_observation.agents_state.empty()) {
-        _from_no_observation(count, limit); // random start
-    } else {
-        _from_last_observation(count, limit); // from specific observation
+unsigned int Particle_filter::create_particles() {
+    particles.clear();
+    if (!trajectory.empty()) {
+        if (last_observation.agents_state.empty()) {
+            _from_no_observation(); // random start
+        } else {
+            _from_last_observation(); // from specific observation
+        }
     }
-    return public_particles.size();
+    return particles.size();
 }
 
-void Particle_filter::_from_no_observation(unsigned int count, unsigned int limit) {
-    public_particles.clear();
-    auto &prey_cell = model.state.public_state.agents_state[0].cell;
-    auto &predator_cell = model.state.public_state.agents_state[1].cell;
-    auto &predator_state = model.state.public_state.agents_state[1];
-    for (int attempt = 0; public_particles.size() < count && attempt < limit; attempt++) {
+void Particle_filter::_from_no_observation() {
+//    auto &prey_cell = model.state.public_state.agents_state[0].cell;
+//    auto &predator_cell = model.state.public_state.agents_state[1].cell;
+//    auto &predator_state = model.state.public_state.agents_state[1];
+//    auto &predator_internal_state = predator.internal_state();
+    for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
         predator.start_cell = predator_start_locations.random_cell();
         model.start_episode();
         bool is_good = true;
         for (auto move : trajectory) {
             prey.move = move;
             model.update(); // prey move
-            if (visibility[prey_cell].contains(predator_cell)) {
+            if (visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
             model.update(); // predator move
-            if (visibility[prey_cell].contains(predator_cell)) {
+            if (visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
         }
-        if (is_good) public_particles.push_back(predator_state);
+        if (is_good) particles.emplace_back(_predator_state, _predator_internal_state);
     }
-}
-
-cell_world::Agent_public_state Particle_filter::get_particle() {
-    if (public_particles.empty()) return last_observation.agents_state[1];
-    return pick_random(public_particles);
 }
 
 void Particle_filter::record_observation(const Model_public_state &state) {
@@ -68,17 +71,17 @@ void Particle_filter::record_observation(const Model_public_state &state) {
     trajectory.clear(); // clears the trajectory.
 }
 
-void Particle_filter::_from_last_observation(unsigned int count, unsigned int limit) {
-    public_particles.clear();
-    auto &prey_cell = model.state.public_state.agents_state[0].cell;
-    auto &predator_cell = model.state.public_state.agents_state[1].cell;
-    auto &predator_state = model.state.public_state.agents_state[1];
-    for (int attempt = 0; public_particles.size() < count && attempt < limit; attempt++) {
+void Particle_filter::_from_last_observation() {
+//    auto &prey_cell = model.state.public_state.agents_state[0].cell;
+//    auto &predator_cell = model.state.public_state.agents_state[1].cell;
+//    auto &predator_state = model.state.public_state.agents_state[1];
+//    auto &predator_internal_state = predator.internal_state();
+    for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
         model.set_public_state(last_observation);
         bool is_good = true;
         if (last_observation.current_turn == 1) { // it is a post move observation
             model.update(); // predator move
-            if (visibility[prey_cell].contains(predator_cell)) {
+            if (visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
@@ -86,17 +89,17 @@ void Particle_filter::_from_last_observation(unsigned int count, unsigned int li
         for (auto move : trajectory) {
             prey.move = move;
             model.update(); // prey move
-            if (visibility[prey_cell].contains(predator_cell)) {
+            if (visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
             model.update(); // predator move
-            if (visibility[prey_cell].contains(predator_cell)) {
+            if (visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
         }
-        if (is_good) public_particles.push_back(predator_state);
+        if (is_good) particles.emplace_back(_predator_state,_predator_internal_state);
     }
 }
 
@@ -114,3 +117,8 @@ cell_world::Agent_status_code Particle_filter::Prey::update_state(const Model_pu
 
 Particle_filter::Prey::Prey(const Cell &start_cell):
     start_cell(start_cell){}
+
+Particle::Particle(const cell_world::Agent_public_state &public_state, const Predator_state &internal_state):
+    public_state(public_state),
+    internal_state(internal_state){
+}

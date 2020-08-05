@@ -11,17 +11,17 @@ Poi_prey::Poi_prey(const Cell_group &cells,
                    const Paths &paths,
                    const Cell &start_cell,
                    const Cell &goal,
-                   const Planning_parameters &planning):
+                   const Planning_parameters &parameters):
         cells(cells),
         pois(pois),
         pois_graph(pois_graph),
         world_graph(world_graph),
         visibility(visibility),
-        paths(paths),
         start_cell(start_cell),
         goal(goal),
-        planning(planning),
-        particle_filter(cells,world_graph,visibility,paths, start_cell, goal){
+        parameters(parameters),
+        particle_filter(cells,world_graph,visibility,paths, start_cell, goal, parameters.particles, parameters.attempts),
+        planner(parameters,particle_filter,world_graph,pois_graph,visibility,paths,start_cell,goal){
 }
 
 const Cell &Poi_prey::start_episode() {
@@ -33,7 +33,16 @@ const Cell &Poi_prey::start_episode() {
 Move Poi_prey::get_move(const Model_public_state &state) {
     bool contact = process_state (state);
     if (internal_state().status == Running) {
-        internal_state().move = plan(contact, state);
+        if (contact) {
+            internal_state().move = planner.get_best_move (state,internal_state().estimated_reward);
+        } else {
+            auto particle_count = particle_filter.create_particles();
+            if (particle_count) {
+                internal_state().move = planner.get_best_move (state,internal_state().estimated_reward, particle_filter.particles);
+            } else { // means no predator, no need to plan
+                internal_state().move = planner.paths.get_move(public_state().cell,goal);
+            }
+        }
     } else {
         internal_state().move = {0,0};
     }

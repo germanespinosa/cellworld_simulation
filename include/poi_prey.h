@@ -31,7 +31,6 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override;
 
     bool process_state(const cell_world::Model_public_state &);
-    cell_world::Move plan (bool ,const cell_world::Model_public_state &);
 
     const cell_world::Cell_group &cells;
     const cell_world::Cell_group &pois;
@@ -40,7 +39,7 @@ struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
     const cell_world::Graph &visibility;
     const cell_world::Cell &start_cell;
     const cell_world::Cell &goal;
-
+    const Planning_parameters &parameters;
 
     Particle_filter particle_filter;
     Planner planner;

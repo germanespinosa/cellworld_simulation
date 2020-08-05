@@ -37,14 +37,22 @@ struct Planner{
             const Particle_filter &,
             const cell_world::Graph &,
             const cell_world::Graph &,
+            const cell_world::Graph &,
             const cell_world::Paths &,
             const cell_world::Cell &,
             const cell_world::Cell &);
 
-    cell_world::Move get_best_move(bool, const cell_world::Model_public_state &);
+    cell_world::Move get_best_move(const cell_world::Model_public_state &,
+                                   double &,
+                                   const std::vector<Particle> &);
+
+    cell_world::Move get_best_move(const cell_world::Model_public_state &,
+                                   double &);
+
 
     const Planning_parameters &parameters;
     const Particle_filter &filter;
+    const cell_world::Graph &pois_graph;
     const cell_world::Paths &paths;
 
     cell_world::Model model;

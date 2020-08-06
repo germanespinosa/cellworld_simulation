@@ -19,6 +19,8 @@ set (cellworld_simulation_files
 
 add_library( cellworld_simulation ${cellworld_simulation_files})
 
+message (" here ${CELLWORLD_TOOLS_LIBRARIES}")
+
 target_link_libraries ( cellworld_simulation ${CELLWORLD_TOOLS_LIBRARIES})
 
 target_include_directories(cellworld_simulation

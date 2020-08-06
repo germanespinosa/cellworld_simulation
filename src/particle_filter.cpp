@@ -41,6 +41,7 @@ unsigned int Particle_filter::create_particles() {
 }
 
 void Particle_filter::_from_no_observation() {
+    if (predator_start_locations.empty()) return; // all cells are visible, no predator on site
     for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
         predator.start_cell = predator_start_locations.random_cell();
         model.start_episode();

@@ -1,7 +1,6 @@
 #include <simulation.h>
 
 using namespace cell_world;
-using namespace cell_world_tools;
 using namespace json_cpp;
 using namespace std;
 
@@ -19,9 +18,9 @@ Simulation::Simulation(Simulation_parameters &sp) :
     poi_graph ( sp.world.create_graph(
                     Json_create<Graph_builder>(
                             Web_resource::from("graph")
-                            .key(sp.world.name)
+                            .key(sp.cmd_parameters["world"].value)
                             .key("pois")
-                            .key(sp.cmd_parameters["path_type"]).get()
+                            .key(sp.cmd_parameters["path_type"].value).get()
                     )
                 )
     ),

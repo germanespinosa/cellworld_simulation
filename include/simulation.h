@@ -5,7 +5,7 @@
 #include <predator.h>
 #include <poi_prey.h>
 
-struct Simulation_parameters : cell_world_tools::Parameters_builder {
+struct Simulation_parameters : cell_world::Parameters_builder {
     cell_world::World world;
     cell_world::Path_builder path_type;
     cell_world::Coordinates prey_start;

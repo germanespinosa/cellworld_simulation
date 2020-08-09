@@ -53,9 +53,4 @@ struct Particle_filter {
 private:
     void _from_no_observation();
     void _from_last_observation();
-
-    const cell_world::Cell &_prey_cell;
-    const cell_world::Agent_public_state & _predator_state;
-    const cell_world::Cell & _predator_cell;
-    const Predator_state &_predator_internal_state;
 };

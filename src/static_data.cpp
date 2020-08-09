@@ -24,7 +24,7 @@ Static_data::Static_data(
                     )
                 )
             ),
-        inverted_visibility(visibility.invert()),
+        inverted_visibility(Visibility::invert(visibility)),
         pois(
             world.create_cell_group(
                 Json_create<Cell_group_builder>(

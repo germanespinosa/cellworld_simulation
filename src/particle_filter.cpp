@@ -15,11 +15,10 @@ Particle_filter::Particle_filter(
         predator_start_locations(data.inverted_visibility[start]),
         prey(start),
         predator(predator_parameters,data),
-        model(Model(data.cells).add_agent(prey).add_agent(predator)),
-        _prey_cell (prey.public_state().cell),
-        _predator_state(predator.public_state()),
-        _predator_cell(_predator_state.cell),
-        _predator_internal_state(predator.internal_state()){}
+        model(Model(data.cells)){
+    model.add_agent(prey).add_agent(predator);
+    model.start_episode();
+}
 
 int Particle_filter::create_particles() {
     particles.clear();
@@ -34,10 +33,15 @@ int Particle_filter::create_particles() {
 }
 
 void Particle_filter::_from_no_observation() {
+    const cell_world::Cell &_prey_cell = prey.public_state().cell;
+    const cell_world::Agent_public_state &_predator_state = predator.public_state();
+    const cell_world::Cell & _predator_cell= _predator_state.cell;
+    Predator_state &_predator_internal_state = predator.internal_state();
+
     if (predator_start_locations.empty()) return; // all cells are visible, no predator on site
     for (int attempt = 0; particles.size() < parameters.particle_count && attempt < parameters.attempts; attempt++) {
         predator.start_cell = predator_start_locations.random_cell();
-        model.start_episode();
+        model.restart_episode();
         bool is_good = true;
         for (auto &move : trajectory) {
             prey.move = move;
@@ -62,6 +66,11 @@ void Particle_filter::record_observation(const Model_public_state &state) {
 }
 
 void Particle_filter::_from_last_observation() {
+    const cell_world::Cell &_prey_cell = prey.public_state().cell;
+    const cell_world::Agent_public_state &_predator_state = predator.public_state();
+    const cell_world::Cell & _predator_cell= _predator_state.cell;
+    Predator_state &_predator_internal_state = predator.internal_state();
+
     for (int attempt = 0; particles.size() < parameters.particle_count && attempt < parameters.attempts; attempt++) {
         model.set_public_state(last_observation);
         bool is_good = true;

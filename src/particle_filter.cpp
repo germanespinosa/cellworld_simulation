@@ -3,26 +3,19 @@
 using namespace cell_world;
 
 Particle_filter::Particle_filter(
-        const Cell_group &cells,
-        const Graph &world_graph,
-        const Graph &visibility,
-        const Paths &paths,
-        const Cell &start_cell,
-        const Cell &goal,
-        unsigned int particle_count,
-        unsigned int attempts_limit) :
-        cells(cells),
-        world_graph(world_graph),
-        visibility(visibility),
-        paths(paths),
-        start_cell(start_cell),
+        const Particle_filter_parameters &parameters,
+        const Predator_parameters &predator_parameters,
+        const Static_data &data,
+        const Cell &start,
+        const Cell &goal) :
+        parameters(parameters),
+        data(data),
+        start(start),
         goal(goal),
-        prey(start_cell),
-        predator(world_graph,visibility,paths),
-        model(Model(cells).add_agent(prey).add_agent(predator)),
-        predator_start_locations(visibility.invert()[start_cell]),
-        particle_count(particle_count),
-        attempts_limit(attempts_limit),
+        predator_start_locations(data.inverted_visibility[start]),
+        prey(start),
+        predator(predator_parameters,data),
+        model(Model(data.cells).add_agent(prey).add_agent(predator)),
         _prey_cell (prey.public_state().cell),
         _predator_state(predator.public_state()),
         _predator_cell(_predator_state.cell),
@@ -42,19 +35,19 @@ unsigned int Particle_filter::create_particles() {
 
 void Particle_filter::_from_no_observation() {
     if (predator_start_locations.empty()) return; // all cells are visible, no predator on site
-    for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
+    for (int attempt = 0; particles.size() < parameters.particle_count && attempt < parameters.attempts; attempt++) {
         predator.start_cell = predator_start_locations.random_cell();
         model.start_episode();
         bool is_good = true;
-        for (auto move : trajectory) {
+        for (auto &move : trajectory) {
             prey.move = move;
             model.update(); // prey move
-            if (visibility[_prey_cell].contains(_predator_cell)) {
+            if (data.visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
             model.update(); // predator move
-            if (visibility[_prey_cell].contains(_predator_cell)) {
+            if (data.visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
@@ -69,25 +62,25 @@ void Particle_filter::record_observation(const Model_public_state &state) {
 }
 
 void Particle_filter::_from_last_observation() {
-    for (int attempt = 0; particles.size() < particle_count && attempt < attempts_limit; attempt++) {
+    for (int attempt = 0; particles.size() < parameters.particle_count && attempt < parameters.attempts; attempt++) {
         model.set_public_state(last_observation);
         bool is_good = true;
         if (last_observation.current_turn == 1) { // it is a post move observation
             model.update(); // predator move
-            if (visibility[_prey_cell].contains(_predator_cell)) {
+            if (data.visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
         }
-        for (auto move : trajectory) {
+        for (auto &move : trajectory) {
             prey.move = move;
             model.update(); // prey move
-            if (visibility[_prey_cell].contains(_predator_cell)) {
+            if (data.visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }
             model.update(); // predator move
-            if (visibility[_prey_cell].contains(_predator_cell)) {
+            if (data.visibility[_prey_cell].contains(_predator_cell)) {
                 is_good = false;
                 break;
             }

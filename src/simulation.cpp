@@ -5,39 +5,13 @@ using namespace json_cpp;
 using namespace std;
 
 Simulation::Simulation(Simulation_parameters &sp) :
-    world ( sp.world ),
-    pois ( sp.world.create_cell_group(
-                    Json_create<Cell_group_builder>(
-                            Web_resource::from("cell_group")
-                            .key(world.name)
-                            .key("pois").get()
-                    )
-            )
-    ),
-    world_graph(sp.world.create_graph()),
-    poi_graph ( sp.world.create_graph(
-                    Json_create<Graph_builder>(
-                            Web_resource::from("graph")
-                            .key(sp.cmd_parameters["world"].value)
-                            .key("pois")
-                            .key(sp.cmd_parameters["path_type"].value).get()
-                    )
-                )
-    ),
-    cells (sp.world.create_cell_group()),
-    map (cells),
-    paths (sp.world.create_paths(sp.path_type)),
-    visibility ( sp.world.create_graph(
-                    Json_create<Graph_builder>(
-                            Web_resource::from("graph")
-                            .key(sp.world.name).key("visibility").get()
-                    )
-                )
-    ),
-    model (cells),
-    planning_parameters (sp.planning),
-    prey (cells, world_graph, pois, poi_graph, visibility, paths, map[sp.prey_start], map[sp.goal], sp.planning),
-    predator (world_graph, visibility, paths, map[sp.predator_start])
+    parameters(sp),
+    data (
+            sp.world,
+            sp.path_type),
+    model (data.cells),
+    prey (sp.prey, sp.planner, sp.particle_filter, sp.predator, data),
+    predator (sp.predator, data)
 {
     model.add_agent(prey);
     model.add_agent(predator);

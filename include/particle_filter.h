@@ -2,6 +2,15 @@
 #include <cell_world.h>
 #include <predator.h>
 
+struct Particle_filter_parameters : json_cpp::Json_object {
+    unsigned int particle_count;
+    unsigned int attempts;
+    Json_object_members({
+        Add_member(particle_count);
+        Add_member(attempts);
+    })
+};
+
 struct Particle {
     Particle ( const cell_world::Agent_public_state &, const Predator_state &);
     cell_world::Agent_public_state public_state;
@@ -19,27 +28,20 @@ struct Particle_filter {
         cell_world::Move move;
     };
 
-    Particle_filter(const cell_world::Cell_group &,
-                    const cell_world::Graph &,
-                    const cell_world::Graph &,
-                    const cell_world::Paths &,
-                    const cell_world::Cell &start_cell,
-                    const cell_world::Cell &goal,
-                    unsigned int,
-                    unsigned int );
+    Particle_filter(const Particle_filter_parameters &,
+                    const Predator_parameters &,
+                    const Static_data &,
+                    const cell_world::Cell &start,
+                    const cell_world::Cell &goal);
 
     unsigned int create_particles ();
     void record_observation(const cell_world::Model_public_state &state);
 
-    const cell_world::Cell_group &cells;
-    const cell_world::Graph &world_graph;
-    const cell_world::Graph &visibility;
-    const cell_world::Paths &paths;
-    const cell_world::Cell &start_cell;
+    const Particle_filter_parameters &parameters;
+    const Static_data &data;
+    const cell_world::Cell &start;
     const cell_world::Cell &goal;
-    const cell_world::Cell_group &predator_start_locations;
-    const unsigned int particle_count;
-    const unsigned int attempts_limit;
+    const cell_world::Cell_group predator_start_locations;
 
     Prey prey;
     Predator predator;
@@ -53,9 +55,7 @@ private:
     void _from_last_observation();
 
     const cell_world::Cell &_prey_cell;
-
     const cell_world::Agent_public_state & _predator_state;
     const cell_world::Cell & _predator_cell;
     const Predator_state &_predator_internal_state;
-
 };

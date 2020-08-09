@@ -1,14 +1,10 @@
 #include <reward.h>
 #include <particle_filter.h>
 
-struct Planning_parameters : json_cpp::Json_object {
-    unsigned int particles;
-    unsigned int attempts;
+struct Planner_parameters : json_cpp::Json_object {
     unsigned int roll_outs;
     Reward reward;
     Json_object_members({
-                            Add_member(particles);
-                            Add_member(attempts);
                             Add_member(roll_outs);
                             Add_member(reward);
                         })
@@ -33,12 +29,10 @@ struct Planner{
         cell_world::Move move;
     };
 
-    Planner(const Planning_parameters &,
-            const Particle_filter &,
-            const cell_world::Graph &,
-            const cell_world::Graph &,
-            const cell_world::Graph &,
-            const cell_world::Paths &,
+    Planner(const Planner_parameters &,
+            const Particle_filter_parameters &,
+            const Predator_parameters &,
+            const Static_data &,
             const cell_world::Cell &,
             const cell_world::Cell &);
 
@@ -49,12 +43,9 @@ struct Planner{
     cell_world::Move get_best_move(const cell_world::Model_public_state &,
                                    double &);
 
-
-    const Planning_parameters &parameters;
-    const Particle_filter &filter;
-    const cell_world::Graph &pois_graph;
-    const cell_world::Paths &paths;
-
+    const Planner_parameters &parameters;
+    const Static_data &data;
+    Particle_filter filter;
     cell_world::Model model;
     Panning_prey prey;
     Predator predator;

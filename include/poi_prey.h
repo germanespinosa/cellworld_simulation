@@ -1,8 +1,18 @@
 #pragma once
 #include <cell_world.h>
-#include <predator.h>
-#include <particle_filter.h>
 #include <planner.h>
+#include <particle_filter.h>
+#include <predator.h>
+#include <static_data.h>
+
+struct Poi_prey_parameters : json_cpp::Json_object {
+    cell_world::Coordinates start;
+    cell_world::Coordinates goal;
+    Json_object_members({
+        Add_member(start);
+        Add_member(goal);
+    })
+};
 
 struct Poi_prey_state : cell_world::Agent_internal_state {
     Poi_prey_state():
@@ -23,30 +33,20 @@ struct Poi_prey_state : cell_world::Agent_internal_state {
 };
 
 struct Poi_prey : cell_world::Stateful_agent<Poi_prey_state> {
-    Poi_prey(const cell_world::Cell_group &,
-             const cell_world::Graph &,
-             const cell_world::Cell_group &,
-             const cell_world::Graph &,
-             const cell_world::Graph &,
-             const cell_world::Paths &,
-             const cell_world::Cell &,
-             const cell_world::Cell &,
-             const Planning_parameters &);
+    Poi_prey(const Poi_prey_parameters &,
+             const Planner_parameters &,
+             const Particle_filter_parameters &,
+             const Predator_parameters &,
+             const Static_data &);
     const cell_world::Cell &start_episode() override;
     cell_world::Move get_move(const cell_world::Model_public_state &) override;
     cell_world::Agent_status_code update_state(const cell_world::Model_public_state &) override;
 
     bool process_state(const cell_world::Model_public_state &);
 
-    const cell_world::Cell_group &cells;
-    const cell_world::Cell_group &pois;
-    const cell_world::Graph &pois_graph;
-    const cell_world::Graph &world_graph;
-    const cell_world::Graph &visibility;
-    const cell_world::Cell &start_cell;
+    const Poi_prey_parameters &parameters;
+    const Static_data &data;
+    const cell_world::Cell &start;
     const cell_world::Cell &goal;
-    const Planning_parameters &parameters;
-
-    Particle_filter particle_filter;
     Planner planner;
 };

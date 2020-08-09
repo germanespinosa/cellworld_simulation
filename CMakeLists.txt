@@ -15,7 +15,8 @@ set (cellworld_simulation_files
         src/poi_prey.cpp
         src/simulation.cpp
         src/particle_filter.cpp
-        src/reward.cpp)
+        src/reward.cpp
+        src/static_data.cpp)
 
 add_library( cellworld_simulation ${cellworld_simulation_files})
 

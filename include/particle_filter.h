@@ -34,7 +34,7 @@ struct Particle_filter {
                     const cell_world::Cell &start,
                     const cell_world::Cell &goal);
 
-    unsigned int create_particles ();
+    int create_particles ();
     void record_observation(const cell_world::Model_public_state &state);
 
     const Particle_filter_parameters &parameters;

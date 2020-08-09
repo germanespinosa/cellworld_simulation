@@ -21,16 +21,16 @@ Particle_filter::Particle_filter(
         _predator_cell(_predator_state.cell),
         _predator_internal_state(predator.internal_state()){}
 
-unsigned int Particle_filter::create_particles() {
+int Particle_filter::create_particles() {
     particles.clear();
-    if (!trajectory.empty()) {
-        if (last_observation.agents_state.empty()) {
-            _from_no_observation(); // random start
-        } else {
-            _from_last_observation(); // from specific observation
-        }
+    if (last_observation.agents_state.empty()) { // there was at least one observation
+        _from_no_observation(); // random start
+        if (particles.empty()) return -1; // there is no predator
+    } else {
+        if (trajectory.empty()) return 0; // predator is currently visible
+        _from_last_observation(); // from specific observation
     }
-    return particles.size();
+    return (int)particles.size();
 }
 
 void Particle_filter::_from_no_observation() {

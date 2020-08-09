@@ -25,12 +25,20 @@ Planner::Planner(const Planner_parameters &parameters,
     model.start_episode();
 }
 
-Move Planner::get_best_move(const Model_public_state &current_state,
-                            double &estimated_reward,
-                            const vector<Particle> &particles) {
-    Model_public_state mps = current_state;
+Move Planner::get_best_move(const Model_public_state &state,
+                            double &estimated_reward) {
+
     auto &prey_sate = model.state.public_state.agents_state[0];
     auto &prey_cell = prey_sate.cell;
+
+    if (update_state(state) == Finished) return {0,0};
+    auto particle_count = filter.create_particles();
+
+    if (particle_count == Not_found) { // there is no predator
+        return data.paths.get_move(prey_cell,prey.goal);
+    }
+
+    Model_public_state mps = state;
     auto &predator_sate = model.state.public_state.agents_state[1];
     auto &predator_cell = predator_sate.cell;
 
@@ -41,7 +49,8 @@ Move Planner::get_best_move(const Model_public_state &current_state,
     for (unsigned int t = 0; t < parameters.roll_outs; t++){
         // if the planner has particles it uses it
         // otherwise it uses the actual location of the predator
-        if (!particles.empty()) mps.agents_state[1] = pick_random(particles).public_state;
+        // because it is visible
+        if (particle_count) mps.agents_state[1] = pick_random(filter.particles).public_state;
         model.set_public_state(mps);
         unsigned int option_index = pick_random_index (options);
         Cell option =  options[option_index]; // select a random option
@@ -84,8 +93,12 @@ Move Planner::get_best_move(const Model_public_state &current_state,
     return data.paths.get_move(mps.agents_state[0].cell, options[best_option]);
 }
 
-cell_world::Move Planner::get_best_move(const Model_public_state &current_state,
-                                        double &estimated_reward) {
-    return get_best_move(current_state, estimated_reward, {});
+cell_world::Agent_status_code Planner::update_state(const Model_public_state &state) {
+    auto &prey_cell = state.agents_state[0].cell;
+    auto &predator_cell = state.agents_state[1].cell;
+    bool contact = data.visibility[prey_cell].contains(predator_cell);
+    if (contact) filter.record_observation(state);
+    if (prey_cell == prey.goal || predator_cell == prey_cell) return Finished;
+    return Running;
 }
 

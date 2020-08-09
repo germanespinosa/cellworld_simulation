@@ -11,8 +11,8 @@ struct Planner_parameters : json_cpp::Json_object {
 };
 
 struct Planner{
-    struct Panning_prey : cell_world::Stateless_agent{
-        Panning_prey (const cell_world::Cell &start, const cell_world::Cell &goal) :
+    struct Panner_prey : cell_world::Stateless_agent{
+        Panner_prey (const cell_world::Cell &start, const cell_world::Cell &goal) :
                 start_cell(start), goal(goal){
         }
         const cell_world::Cell &start_episode() override {
@@ -37,16 +37,14 @@ struct Planner{
             const cell_world::Cell &);
 
     cell_world::Move get_best_move(const cell_world::Model_public_state &,
-                                   double &,
-                                   const std::vector<Particle> &);
-
-    cell_world::Move get_best_move(const cell_world::Model_public_state &,
                                    double &);
+
+    cell_world::Agent_status_code update_state(const cell_world::Model_public_state &);
 
     const Planner_parameters &parameters;
     const Static_data &data;
     Particle_filter filter;
     cell_world::Model model;
-    Panning_prey prey;
+    Panner_prey prey;
     Predator predator;
 };

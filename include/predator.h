@@ -28,7 +28,7 @@ struct Predator : cell_world::Stateful_agent<Predator_state> {
     cell_world::Cell start_cell;
 private:
     void _process_state(const cell_world::Model_public_state &);
-    unsigned int _steps();
+    unsigned int _steps() const;
     unsigned int _speed_base;
     double _speed_overflow;
 };

@@ -48,8 +48,8 @@ void Predator::_process_state(const Model_public_state &state) {
     }
 }
 
-unsigned int Predator::_steps() {
+unsigned int Predator::_steps() const {
     unsigned int steps = Chance::dice(_speed_base);
-    steps += Chance::coin_toss(_speed_overflow);
-    return 0;
+    if (Chance::coin_toss(_speed_overflow)) steps++;
+    return steps;
 }

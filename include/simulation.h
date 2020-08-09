@@ -16,7 +16,7 @@ struct Simulation_parameters : cell_world::Parameters_builder {
     Parameters_definitions({
         Add_web_resource(world, ({"world"}));
         Add_value(path_type);
-        Add_web_resource(planner,({"planning"}));
+        Add_web_resource(planner,({"planner"}));
         Add_web_resource(particle_filter,({"particle_filter"}));
         Add_web_resource(prey,({"prey"}));
         Add_web_resource(predator,({"predator"}));

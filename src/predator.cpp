@@ -25,8 +25,13 @@ Move Predator::get_move(const Model_public_state &state) {
     auto steps = _steps();
     Move move {0,0};
     for (unsigned int step=0; step<steps; step++){
-        auto current = predator_cell.coordinates + move;
-        move += data.paths.get_move(data.map[current],prey_cell);
+        auto current_coord = predator_cell.coordinates + move;
+        auto &current_cell = data.map[current_coord];
+        if (Chance::coin_toss(parameters.randomness)) {
+            move = data.world_graph[current_cell].random_cell().coordinates;
+        } else {
+            move += data.paths.get_move(current_cell, prey_cell);
+        }
     }
     return move;
 }

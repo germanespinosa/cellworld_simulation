@@ -22,7 +22,13 @@ Move Predator::get_move(const Model_public_state &state) {
     _process_state(state);
     auto &prey_cell = state.agents_state[0].cell;
     auto &predator_cell = state.agents_state[1].cell;
-    return data.paths.get_move(predator_cell,prey_cell);
+    auto steps = _steps();
+    Move move {0,0};
+    for (unsigned int step=0; step<steps; step++){
+        auto current = predator_cell.coordinates + move;
+        move += data.paths.get_move(data.map[current],prey_cell);
+    }
+    return move;
 }
 
 Agent_status_code Predator::update_state(const Model_public_state &state) {

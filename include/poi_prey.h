@@ -8,9 +8,11 @@
 struct Poi_prey_parameters : json_cpp::Json_object {
     cell_world::Coordinates start;
     cell_world::Coordinates goal;
+    unsigned int steps;
     Json_object_members({
         Add_member(start);
         Add_member(goal);
+        Add_member(steps);
     })
 };
 

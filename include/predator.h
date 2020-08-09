@@ -4,8 +4,8 @@
 
 struct Predator_parameters :json_cpp::Json_object{
     cell_world::Coordinates start;
-    float speed;
-    float randomness;
+    double speed;
+    double randomness;
     Json_object_members({
         Add_member(start);
         Add_member(speed);

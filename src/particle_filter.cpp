@@ -75,6 +75,7 @@ void Particle_filter::_from_last_observation() {
 
     for (int attempt = 0; particles.size() < parameters.particle_count && attempt < parameters.attempts; attempt++) {
         model.set_public_state(last_observation);
+        predator.update_state(last_observation);
         bool is_good = true;
         if (last_observation.current_turn == 1) { // it is a post move observation
             model.update(); // predator move

@@ -14,6 +14,7 @@ struct Predator_parameters :json_cpp::Json_object{
 };
 
 struct Predator_state : cell_world::Agent_internal_state {
+    cell_world::Move move;
     cell_world::Cell goal;
 };
 

@@ -28,21 +28,23 @@ Planner::Planner(const Planner_parameters &parameters,
 Move Planner::get_best_move(const Model_public_state &state,
                             double &estimated_reward) {
 
+    auto &current_cell = state.agents_state[0].cell;
     auto &prey_sate = model.state.public_state.agents_state[0];
     auto &prey_cell = prey_sate.cell;
 
     if (update_state(state) == Finished) return {0,0};
+
     auto particle_count = filter.create_particles();
 
     if (particle_count == Not_found) { // there is no predator
-        return data.paths.get_move(prey_cell,prey.goal);
+        return data.paths.get_move(current_cell,prey.goal);
     }
 
     Model_public_state mps = state;
     auto &predator_sate = model.state.public_state.agents_state[1];
     auto &predator_cell = predator_sate.cell;
 
-    Cell_group options = data.pois_graph[prey_cell];
+    Cell_group options = data.pois_graph[current_cell];
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
 
@@ -90,7 +92,10 @@ Move Planner::get_best_move(const Model_public_state &state,
         }
     }
     estimated_reward = best_reward;
-    return data.paths.get_move(mps.agents_state[0].cell, options[best_option]);
+    option = options[best_option].coordinates;
+    Move best_move = data.paths.get_move(current_cell, options[best_option]);
+    filter.trajectory.push_back(best_move);
+    return best_move;
 }
 
 cell_world::Agent_status_code Planner::update_state(const Model_public_state &state) {

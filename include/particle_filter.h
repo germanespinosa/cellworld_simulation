@@ -36,7 +36,7 @@ struct Particle_filter {
 
     int create_particles ();
     void record_observation(const cell_world::Model_public_state &state);
-
+    cell_world::Cell_group belief_state();
     const Particle_filter_parameters &parameters;
     const Static_data &data;
     const cell_world::Cell &start;
@@ -49,7 +49,7 @@ struct Particle_filter {
     std::vector<Particle> particles;
     std::vector<cell_world::Move> trajectory;
     cell_world::Model_public_state last_observation;
-
+    unsigned int observation_counter;
 private:
     void _from_no_observation();
     void _from_last_observation();

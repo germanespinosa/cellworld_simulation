@@ -43,6 +43,9 @@ struct Planner{
 
     const Planner_parameters &parameters;
     const Static_data &data;
+
+
+    cell_world::Coordinates option;
     Particle_filter filter;
     cell_world::Model model;
     Panner_prey prey;

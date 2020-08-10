@@ -1,4 +1,5 @@
 #include <simulation.h>
+#include <cell_world_tools.h>
 
 using namespace cell_world;
 using namespace json_cpp;
@@ -15,6 +16,7 @@ Simulation::Simulation(Simulation_parameters &sp) :
 {
     model.add_agent(prey);
     model.add_agent(predator);
+    srand(sp.seed);
 }
 
 
@@ -45,18 +47,69 @@ struct Data : json_cpp::Json_object{
 
 unsigned int Simulation::run() {
     model.start_episode();
-    cout << "prey: " << model.state.public_state.agents_state[0].cell.coordinates << endl;
-    cout << "predator: " << model.state.public_state.agents_state[1].cell.coordinates << endl;
+    Json_vector<Data> journal;
     do {
-        if (!model.state.public_state.current_turn) {
-            Data data {model.state.public_state,
-                       prey.internal_state(),
-                       predator.internal_state()};
-            cout << data << endl;
-        }
+        show_map();
+        journal.emplace_back(model.state.public_state,
+                             prey.internal_state(),
+                             predator.internal_state());
     } while (model.update());
-    cout << "prey: " << model.state.public_state.agents_state[0].cell.coordinates << endl;
-    cout << "predator: " << model.state.public_state.agents_state[1].cell.coordinates << endl;
+    show_map();
+    journal.emplace_back(model.state.public_state,
+                         prey.internal_state(),
+                         predator.internal_state());
     model.end_episode();
+    cout << journal;
     return 1;
+}
+
+Map_symbols ms;
+
+void Simulation::show_map() {
+    Screen_map sm (data.map);
+    auto &prey_cell = prey.public_state().cell;
+    auto &prey_move = prey.internal_state().move;
+    auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
+    auto &predator_cell = predator.public_state().cell;
+    auto &predator_move = predator.internal_state().move;
+    auto &predator_prev = data.map[predator_cell.coordinates-predator_move];
+
+    if (model.state.public_state.current_turn){
+        auto &prey_visibility = data.visibility[prey_prev];
+        auto belief_state = prey.planner.filter.belief_state();
+
+        if (prey_visibility.contains(predator_cell)) {
+            sm.add_special_cell(predator_cell, ms.two.front(Blue).back(Yellow));
+        } else {
+            if (belief_state.contains(predator_cell)) {
+                sm.add_special_cell(predator_cell, ms.two.front(Red).back(Blue));
+            }else{
+                sm.add_special_cell(predator_cell, ms.two.front(Blue));
+            }
+        }
+
+        sm.add_special_cell(prey.internal_state().option, ms.goal.front(Red));
+        sm.add_special_cell(prey_prev,ms.one.front(Red));
+        sm.add_group(prey_visibility, ms.clear.back(Yellow));
+
+        sm.add_group(belief_state, ms.clear.back(Blue));
+
+        sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
+        cout << sm << endl;
+
+    }
+//  else {
+//        auto &predator_visibility = data.visibility[predator_prev];
+//
+//        sm.add_special_cell(predator.internal_state().goal, ms.goal.front(Blue));
+//        if (predator_visibility.contains(prey_cell))
+//            sm.add_special_cell(prey_cell, ms.one.front(Red).back(Cyan));
+//        else
+//            sm.add_special_cell(prey_cell, ms.one.front(Red));
+//
+//        sm.add_special_cell(predator_prev,ms.two.front(Blue));
+//        sm.add_group(predator_visibility, ms.clear.back(Cyan));
+//
+//        sm.add_special_cell(predator_cell, ms.get_direction(predator_move));
+//    }
 }

@@ -11,7 +11,7 @@ using namespace json_cpp;
 TEST_CASE("test predator parameters"){
     Predator_parameters p;
     Web_resource::from("predator").key("aggressive").get() >> p;
-    CHECK(p.randomness == .1);
-    CHECK(p.speed == 1.8);
-    CHECK(p.start == Coordinates{-7,-7});
+    CHECK(p.randomness == 0);
+    CHECK(p.speed == 1);
+    CHECK(p.start == Coordinates{-7,7});
 }

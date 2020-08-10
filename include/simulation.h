@@ -13,6 +13,7 @@ struct Simulation_parameters : cell_world::Parameters_builder {
     Particle_filter_parameters particle_filter;
     Poi_prey_parameters prey;
     Predator_parameters predator;
+    unsigned int seed;
     Parameters_definitions({
         Add_web_resource(world, ({"world"}));
         Add_value(path_type);
@@ -20,12 +21,14 @@ struct Simulation_parameters : cell_world::Parameters_builder {
         Add_web_resource(particle_filter,({"particle_filter"}));
         Add_web_resource(prey,({"prey"}));
         Add_web_resource(predator,({"predator"}));
+        Add_value(seed);
    })
 };
 
 struct Simulation {
     explicit Simulation(Simulation_parameters &);
     unsigned int run();
+    void show_map();
     Simulation_parameters parameters;
     Static_data data;
     cell_world::Model model;

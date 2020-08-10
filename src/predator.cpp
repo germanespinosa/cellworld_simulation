@@ -23,17 +23,20 @@ Move Predator::get_move(const Model_public_state &state) {
     auto &prey_cell = state.agents_state[0].cell;
     auto &predator_cell = state.agents_state[1].cell;
     auto steps = _steps();
-    Move move {0,0};
+    if (steps > 1) {
+        internal_state().move = {0, 0};
+    }
+    internal_state().move = {0,0};
     for (unsigned int step=0; step<steps; step++){
-        auto current_coord = predator_cell.coordinates + move;
+        auto current_coord = predator_cell.coordinates + internal_state().move;
         auto &current_cell = data.map[current_coord];
         if (Chance::coin_toss(parameters.randomness)) {
-            move = data.world_graph[current_cell].random_cell().coordinates;
+            internal_state().move = data.world_graph[current_cell].random_cell().coordinates - current_coord;
         } else {
-            move += data.paths.get_move(current_cell, prey_cell);
+            internal_state().move += data.paths.get_move(current_cell, internal_state().goal);
         }
     }
-    return move;
+    return internal_state().move;
 }
 
 Agent_status_code Predator::update_state(const Model_public_state &state) {
@@ -54,7 +57,7 @@ void Predator::_process_state(const Model_public_state &state) {
 }
 
 unsigned int Predator::_steps() const {
-    unsigned int steps = Chance::dice(_speed_base);
+    unsigned int steps = _speed_base;
     if (Chance::coin_toss(_speed_overflow)) steps++;
     return steps;
 }

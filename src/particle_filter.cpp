@@ -15,19 +15,20 @@ Particle_filter::Particle_filter(
         predator_start_locations(data.inverted_visibility[start]),
         prey(start),
         predator(predator_parameters,data),
-        model(Model(data.cells)){
+        model(Model(data.cells)),
+        observation_counter(0){
     model.add_agent(prey).add_agent(predator);
     model.start_episode();
 }
 
 int Particle_filter::create_particles() {
     particles.clear();
-    if (last_observation.agents_state.empty()) { // there was at least one observation
-        _from_no_observation(); // random start
-        if (particles.empty()) return -1; // there is no predator
-    } else {
+    if (observation_counter) { // there was at least one observation
         if (trajectory.empty()) return 0; // predator is currently visible
         _from_last_observation(); // from specific observation
+    } else {
+        _from_no_observation(); // random start
+        if (particles.empty()) return -1; // there is no predator
     }
     return (int)particles.size();
 }
@@ -61,7 +62,8 @@ void Particle_filter::_from_no_observation() {
 }
 
 void Particle_filter::record_observation(const Model_public_state &state) {
-    model.set_public_state(state);
+    observation_counter++;
+   last_observation = state;
     trajectory.clear(); // clears the trajectory.
 }
 
@@ -96,6 +98,12 @@ void Particle_filter::_from_last_observation() {
         }
         if (is_good) particles.emplace_back(_predator_state,_predator_internal_state);
     }
+}
+
+cell_world::Cell_group Particle_filter::belief_state() {
+    Cell_group bs;
+    for (auto &p:particles) bs.add(p.public_state.cell);
+    return bs;
 }
 
 const cell_world::Cell &Particle_filter::Prey::start_episode() {

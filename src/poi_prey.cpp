@@ -28,6 +28,7 @@ const Cell &Poi_prey::start_episode() {
 
 Move Poi_prey::get_move(const Model_public_state &state) {
     internal_state().move = planner.get_best_move(state,internal_state().estimated_reward);
+    internal_state().option = planner.option;
     return internal_state().move;
 }
 

@@ -33,3 +33,17 @@ target_link_libraries( cellworld_run  cellworld_simulation)
 ### TESTS
 ###
 find_package(CatchTests CONFIG QUIET)
+
+
+###
+### SIMULATION INSTALLATION
+###
+
+if (CMAKE_BUILD_TYPE MATCHES Release)
+
+    include(GNUInstallDirs)
+
+    install(TARGETS cellworld_run
+            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+endif()

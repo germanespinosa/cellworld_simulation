@@ -44,7 +44,7 @@ Move Planner::get_best_move(const Model_public_state &state,
     auto &predator_sate = model.state.public_state.agents_state[1];
     auto &predator_cell = predator_sate.cell;
 
-    Cell_group options = data.pois_graph[current_cell];
+    Cell_group options = get_valid_options(current_cell,state.agents_state[0].iteration);
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
 
@@ -64,7 +64,11 @@ Move Planner::get_best_move(const Model_public_state &state,
             model.update(); // execute the move
             if (prey_cell == prey.goal ) break; // if the prey wins stop;
             if (prey_cell == option) { // if the prey reaches the current option
-                option = data.pois_graph[prey_cell].random_cell(); // it selects a new option
+                auto valid_options = get_valid_options(prey_cell,prey.public_state().iteration);
+                if (valid_options.empty()){ // no valid options left
+                    break;
+                }
+                option = valid_options.random_cell(); // it selects a new option
             }
             model.update(); // predator moves
             if (prey_cell == predator_cell ) break; // the predator wins
@@ -105,5 +109,16 @@ cell_world::Agent_status_code Planner::update_state(const Model_public_state &st
     if (contact) filter.record_observation(state);
     if (prey_cell == prey.goal || predator_cell == prey_cell) return Finished;
     return Running;
+}
+
+cell_world::Cell_group Planner::get_valid_options(const Cell &cell, unsigned int iteration) const {
+    unsigned int remaining_steps = model.state.public_state.iterations - iteration;
+    Cell_group options = data.pois_graph[cell];
+    Cell_group valid_options;
+    for (auto &option:options){
+        int min_steps_to_goal = data.paths.get_steps(cell,option) + data.paths.get_steps(option,prey.goal);
+        if (min_steps_to_goal<remaining_steps) valid_options.add(option);
+    }
+    return valid_options;
 }
 

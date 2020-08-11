@@ -62,7 +62,9 @@ unsigned int Simulation::run() {
             journal.emplace_back(model.state.public_state,
                                  prey.internal_state(),
                                  predator.internal_state());
+            show_map();
         } while (model.update());
+        show_map();
         journal.emplace_back(model.state.public_state,
                              prey.internal_state(),
                              predator.internal_state());

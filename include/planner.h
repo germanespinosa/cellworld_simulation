@@ -41,6 +41,8 @@ struct Planner{
 
     cell_world::Agent_status_code update_state(const cell_world::Model_public_state &);
 
+    cell_world::Cell_group get_valid_options(const cell_world::Cell &, unsigned int) const;
+
     const Planner_parameters &parameters;
     const Static_data &data;
 

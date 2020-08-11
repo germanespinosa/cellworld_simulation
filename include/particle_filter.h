@@ -17,6 +17,11 @@ struct Particle {
     Predator_state internal_state;
 };
 
+struct Belief_state {
+    cell_world::Coordinates_list particles_coordinates;
+    json_cpp::Json_vector<unsigned int> hits;
+};
+
 struct Particle_filter {
     struct Prey : cell_world::Stateless_agent {
         Prey(const cell_world::Cell &);
@@ -36,7 +41,7 @@ struct Particle_filter {
 
     int create_particles ();
     void record_observation(const cell_world::Model_public_state &state);
-    cell_world::Cell_group belief_state();
+    Belief_state get_belief_state();
     const Particle_filter_parameters &parameters;
     const Static_data &data;
     const cell_world::Cell &start;

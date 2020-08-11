@@ -15,10 +15,18 @@ Simulation::Simulation(Simulation_parameters &sp) :
     predator (sp.predator, data)
 {
     model.add_agent(prey);
-    model.add_agent(predator);
-    srand(sp.seed);
+    if (sp.predator_present) {
+        model.add_agent(predator);
+    } else {
+        model.add_agent(ghost);
+    }
 }
 
+
+struct Predator_data {
+    Coordinates coordinates;
+
+};
 
 struct Data : json_cpp::Json_object{
     Data () = default;
@@ -46,70 +54,73 @@ struct Data : json_cpp::Json_object{
 
 
 unsigned int Simulation::run() {
-    model.start_episode();
-    Json_vector<Data> journal;
-    do {
-        show_map();
+    for (auto seed:parameters.seeds) {
+        srand(seed);
+        model.start_episode();
+        Json_vector<Data> journal;
+        do {
+            journal.emplace_back(model.state.public_state,
+                                 prey.internal_state(),
+                                 predator.internal_state());
+        } while (model.update());
         journal.emplace_back(model.state.public_state,
                              prey.internal_state(),
                              predator.internal_state());
-    } while (model.update());
-    show_map();
-    journal.emplace_back(model.state.public_state,
-                         prey.internal_state(),
-                         predator.internal_state());
-    model.end_episode();
-    cout << journal;
+        model.end_episode();
+        cout << journal;
+    }
     return 1;
 }
 
 Map_symbols ms;
 
+
+vector<Map_symbol> gradient(Map_symbol_color fg, Map_symbol_color bg){
+    vector<Map_symbol> g;
+    g.emplace_back(9617, fg, bg);
+    g.emplace_back(9618, fg, bg);
+    g.emplace_back(9619, fg, bg);
+    g.emplace_back(9608, fg, bg);
+    return g;
+}
+
+vector<Coordinates_list> beliefs(Belief_state bs, unsigned int groups){
+    unsigned  int max=0;
+    for (auto b:bs.hits) max=b>max?b:max;
+    unsigned int div = max / groups + 1;
+    vector<Coordinates_list> bg (groups);
+    for (unsigned int i=0; i<bs.hits.size() ; i++){
+        unsigned int index = bs.hits[i]/div;
+        bg[index].push_back(bs.particles_coordinates[i]);
+    }
+    return bg;
+}
+
 void Simulation::show_map() {
-    Screen_map sm (data.map);
-    auto &prey_cell = prey.public_state().cell;
-    auto &prey_move = prey.internal_state().move;
-    auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
-    auto &predator_cell = predator.public_state().cell;
-    auto &predator_move = predator.internal_state().move;
-    auto &predator_prev = data.map[predator_cell.coordinates-predator_move];
-
     if (model.state.public_state.current_turn){
+        Screen_map sm (data.map);
+        auto &prey_cell = prey.public_state().cell;
+        auto &prey_move = prey.internal_state().move;
+        auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
+        auto &predator_cell = model.state.public_state.agents_state[1].cell;
         auto &prey_visibility = data.visibility[prey_prev];
-        auto belief_state = prey.planner.filter.belief_state();
-
+        auto belief_state_grouped = beliefs(prey.planner.filter.get_belief_state(), 4);
         if (prey_visibility.contains(predator_cell)) {
             sm.add_special_cell(predator_cell, ms.two.front(Blue).back(Yellow));
-        } else {
-            if (belief_state.contains(predator_cell)) {
-                sm.add_special_cell(predator_cell, ms.two.front(Red).back(Blue));
-            }else{
-                sm.add_special_cell(predator_cell, ms.two.front(Blue));
-            }
         }
-
         sm.add_special_cell(prey.internal_state().option, ms.goal.front(Red));
         sm.add_special_cell(prey_prev,ms.one.front(Red));
         sm.add_group(prey_visibility, ms.clear.back(Yellow));
 
-        sm.add_group(belief_state, ms.clear.back(Blue));
+        auto g = gradient(Blue,White);
+        sm.add_group(belief_state_grouped[0],g[0]);
+        sm.add_group(belief_state_grouped[1],g[1]);
+        sm.add_group(belief_state_grouped[2],g[2]);
+        sm.add_group(belief_state_grouped[3],g[3]);
 
         sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
         cout << sm << endl;
 
     }
-//  else {
-//        auto &predator_visibility = data.visibility[predator_prev];
-//
-//        sm.add_special_cell(predator.internal_state().goal, ms.goal.front(Blue));
-//        if (predator_visibility.contains(prey_cell))
-//            sm.add_special_cell(prey_cell, ms.one.front(Red).back(Cyan));
-//        else
-//            sm.add_special_cell(prey_cell, ms.one.front(Red));
-//
-//        sm.add_special_cell(predator_prev,ms.two.front(Blue));
-//        sm.add_group(predator_visibility, ms.clear.back(Cyan));
-//
-//        sm.add_special_cell(predator_cell, ms.get_direction(predator_move));
-//    }
 }
+

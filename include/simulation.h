@@ -6,22 +6,27 @@
 #include <predator.h>
 #include <poi_prey.h>
 
+
 struct Simulation_parameters : cell_world::Parameters_builder {
+    std::string id;
     cell_world::World world;
     std::string path_type;
     Planner_parameters planner;
     Particle_filter_parameters particle_filter;
     Poi_prey_parameters prey;
     Predator_parameters predator;
-    unsigned int seed;
+    json_cpp::Json_vector<unsigned int> seeds;
+    bool predator_present;
     Parameters_definitions({
+        Add_value(id);
         Add_web_resource(world, ({"world"}));
         Add_value(path_type);
         Add_web_resource(planner,({"planner"}));
         Add_web_resource(particle_filter,({"particle_filter"}));
         Add_web_resource(prey,({"prey"}));
         Add_web_resource(predator,({"predator"}));
-        Add_value(seed);
+        Add_value(seeds);
+        Add_value(predator_present);
    })
 };
 
@@ -34,4 +39,5 @@ struct Simulation {
     cell_world::Model model;
     Poi_prey prey;
     Predator predator;
+    cell_world::Stateless_agent ghost;
 };

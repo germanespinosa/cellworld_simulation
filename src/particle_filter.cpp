@@ -101,9 +101,17 @@ void Particle_filter::_from_last_observation() {
     }
 }
 
-cell_world::Cell_group Particle_filter::belief_state() {
-    Cell_group bs;
-    for (auto &p:particles) bs.add(p.public_state.cell);
+Belief_state Particle_filter::get_belief_state() {
+    Belief_state bs;
+    Cell_group cells;
+    for (auto &p:particles) {
+        if (cells.add(p.public_state.cell)){
+            bs.particles_coordinates.push_back(p.public_state.cell.coordinates);
+            bs.hits.push_back(1);
+        } else {
+            bs.hits[cells.find(p.public_state.cell)]++;
+        }
+    }
     return bs;
 }
 

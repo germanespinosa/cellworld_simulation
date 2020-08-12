@@ -16,7 +16,8 @@ set (cellworld_simulation_files
         src/simulation.cpp
         src/particle_filter.cpp
         src/reward.cpp
-        src/static_data.cpp)
+        src/static_data.cpp
+        src/search_tree.cpp)
 
 add_library( cellworld_simulation ${cellworld_simulation_files})
 

@@ -122,7 +122,6 @@ void Simulation::show_map() {
 
         sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
         cout << sm << endl;
-
     }
 }
 

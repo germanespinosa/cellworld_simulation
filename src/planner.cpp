@@ -1,4 +1,6 @@
 #include <planner.h>
+#include <search_tree.h>
+#include <cell_world_tools.h>
 
 using namespace cell_world;
 using namespace std;
@@ -28,9 +30,12 @@ Planner::Planner(const Planner_parameters &parameters,
 Move Planner::get_best_move(const Model_public_state &state,
                             double &estimated_reward) {
 
+    model.set_public_state(state);
+
     auto &current_cell = state.agents_state[0].cell;
     auto &prey_sate = model.state.public_state.agents_state[0];
     auto &prey_cell = prey_sate.cell;
+
 
     if (update_state(state) == Finished) return {0,0};
 
@@ -44,9 +49,13 @@ Move Planner::get_best_move(const Model_public_state &state,
     auto &predator_sate = model.state.public_state.agents_state[1];
     auto &predator_cell = predator_sate.cell;
 
+
+
     Cell_group options = get_valid_options(current_cell,state.agents_state[0].iteration);
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
+
+    Search_tree tree (data.pois_graph,data.paths,prey_cell, model.state.public_state.iterations - prey_sate.iteration);
 
     for (unsigned int t = 0; t < parameters.roll_outs; t++){
         // if the planner has particles it uses it
@@ -54,21 +63,22 @@ Move Planner::get_best_move(const Model_public_state &state,
         // because it is visible
         if (particle_count) mps.agents_state[1] = pick_random(filter.particles).public_state;
         model.set_public_state(mps);
-        unsigned int option_index = pick_random_index (options);
-        Cell option =  options[option_index]; // select a random option
-        double &option_reward_acum = options_rewards_acum[option_index];
-        unsigned int &option_counter = options_counters[option_index];
 
+        unsigned int option_index = pick_random_index (options);
+        // selects an option stochastically with probability proportional
+        // to reward and inversely proportional to previous visits
+        tree.rewind();
+        tree.get_option();
         while (true){
+            auto option = tree.current_option();
             prey.move = data.paths.get_move(prey_cell, option); //get the move from the path
             model.update(); // execute the move
             if (prey_cell == prey.goal ) break; // if the prey wins stop;
             if (prey_cell == option) { // if the prey reaches the current option
-                auto valid_options = get_valid_options(prey_cell,prey.public_state().iteration);
-                if (valid_options.empty()){ // no valid options left
+                if (tree.finished()){ // no valid options left
                     break;
                 }
-                option = valid_options.random_cell(); // it selects a new option
+                tree.get_option(); // it selects a new option
             }
             model.update(); // predator moves
             if (prey_cell == predator_cell ) break; // the predator wins
@@ -81,23 +91,10 @@ Move Planner::get_best_move(const Model_public_state &state,
         } else {
             current_reward = parameters.reward.compute(Fail, steps);
         }
-        option_reward_acum += current_reward;
-        option_counter++;
+        tree.record_reward(current_reward);
     }
-    double best_reward;
-    int best_option = Not_found;
-    for (unsigned int option_index = 0; option_index < options.size(); option_index++ ){
-        double &option_reward_acum = options_rewards_acum[option_index];
-        unsigned int &option_counter = options_counters[option_index];
-        double current_option_reward = option_reward_acum / option_counter;
-        if (current_option_reward > best_reward || best_option == Not_found){
-            best_reward = current_option_reward;
-            best_option = (int)option_index;
-        }
-    }
-    estimated_reward = best_reward;
-    option = options[best_option].coordinates;
-    Move best_move = data.paths.get_move(current_cell, options[best_option]);
+    Move best_move = data.paths.get_move(current_cell, tree.get_best_option());
+    estimated_reward = tree.estimated_reward;
     filter.trajectory.push_back(best_move);
     return best_move;
 }
@@ -120,5 +117,10 @@ cell_world::Cell_group Planner::get_valid_options(const Cell &cell, unsigned int
         if (min_steps_to_goal<remaining_steps) valid_options.add(option);
     }
     return valid_options;
+}
+
+void Planner::reset() {
+    model.restart_episode();
+    filter.reset();
 }
 

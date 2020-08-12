@@ -23,6 +23,7 @@ Poi_prey::Poi_prey(const Poi_prey_parameters &parameters,
 const Cell &Poi_prey::start_episode() {
     internal_state().status = cell_world::Running;
     internal_state().coordinates = start.coordinates;
+    planner.reset();
     return start;
 }
 

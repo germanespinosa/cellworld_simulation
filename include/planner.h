@@ -43,9 +43,11 @@ struct Planner{
 
     cell_world::Cell_group get_valid_options(const cell_world::Cell &, unsigned int) const;
 
+
+    void reset();
+
     const Planner_parameters &parameters;
     const Static_data &data;
-
 
     cell_world::Coordinates option;
     Particle_filter filter;

@@ -115,6 +115,11 @@ Belief_state Particle_filter::get_belief_state() {
     return bs;
 }
 
+void Particle_filter::reset() {
+    trajectory.clear();
+    observation_counter = 0;
+}
+
 const cell_world::Cell &Particle_filter::Prey::start_episode() {
     return start_cell;
 }

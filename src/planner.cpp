@@ -61,7 +61,7 @@ Move Planner::get_best_move(const Model_public_state &state,
         // if the planner has particles it uses it
         // otherwise it uses the actual location of the predator
         // because it is visible
-        if (particle_count) mps.agents_state[1] = pick_random(filter.particles).public_state;
+        if (particle_count) mps.agents_state[1] = pick_random(filter.particles).public_state.agents_state[1];
         model.set_public_state(mps);
 
         unsigned int option_index = pick_random_index (options);

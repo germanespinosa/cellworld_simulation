@@ -12,8 +12,8 @@ struct Particle_filter_parameters : json_cpp::Json_object {
 };
 
 struct Particle {
-    Particle ( const cell_world::Agent_public_state &, const Predator_state &);
-    cell_world::Agent_public_state public_state;
+    Particle ( const cell_world::Model_public_state &, const Predator_state &);
+    cell_world::Model_public_state public_state;
     Predator_state internal_state;
 };
 
@@ -61,4 +61,5 @@ struct Particle_filter {
 private:
     void _from_no_observation();
     void _from_last_observation();
+    void _reuse_particles();
 };

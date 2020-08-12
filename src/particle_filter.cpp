@@ -1,6 +1,7 @@
 #include <particle_filter.h>
 
 using namespace cell_world;
+using namespace std;
 
 Particle_filter::Particle_filter(
         const Particle_filter_parameters &parameters,
@@ -22,7 +23,6 @@ Particle_filter::Particle_filter(
 }
 
 int Particle_filter::create_particles() {
-    particles.clear();
     if (observation_counter) { // there was at least one observation
         if (trajectory.empty()) return 0; // predator is currently visible
         _from_last_observation(); // from specific observation
@@ -34,6 +34,7 @@ int Particle_filter::create_particles() {
 }
 
 void Particle_filter::_from_no_observation() {
+    _reuse_particles();
     const cell_world::Cell &_prey_cell = prey.public_state().cell;
     const cell_world::Agent_public_state &_predator_state = predator.public_state();
     const cell_world::Cell & _predator_cell= _predator_state.cell;
@@ -57,17 +58,18 @@ void Particle_filter::_from_no_observation() {
                 break;
             }
         }
-        if (is_good) particles.emplace_back(_predator_state, _predator_internal_state);
+        if (is_good) particles.emplace_back(model.state.public_state, _predator_internal_state);
     }
 }
 
 void Particle_filter::record_observation(const Model_public_state &state) {
     observation_counter++;
-   last_observation = state;
+    last_observation = state;
     trajectory.clear(); // clears the trajectory.
 }
 
 void Particle_filter::_from_last_observation() {
+    _reuse_particles();
     const cell_world::Cell &_prey_cell = prey.public_state().cell;
     const cell_world::Agent_public_state &_predator_state = predator.public_state();
     const cell_world::Cell & _predator_cell= _predator_state.cell;
@@ -97,7 +99,7 @@ void Particle_filter::_from_last_observation() {
                 break;
             }
         }
-        if (is_good) particles.emplace_back(_predator_state,_predator_internal_state);
+        if (is_good) particles.emplace_back(model.state.public_state,_predator_internal_state);
     }
 }
 
@@ -105,11 +107,11 @@ Belief_state Particle_filter::get_belief_state() {
     Belief_state bs;
     Cell_group cells;
     for (auto &p:particles) {
-        if (cells.add(p.public_state.cell)){
-            bs.particles_coordinates.push_back(p.public_state.cell.coordinates);
+        if (cells.add(p.public_state.agents_state[1].cell)){
+            bs.particles_coordinates.push_back(p.public_state.agents_state[1].cell.coordinates);
             bs.hits.push_back(1);
         } else {
-            bs.hits[cells.find(p.public_state.cell)]++;
+            bs.hits[cells.find(p.public_state.agents_state[1].cell)]++;
         }
     }
     return bs;
@@ -119,6 +121,28 @@ void Particle_filter::reset() {
     trajectory.clear();
     observation_counter = 0;
 }
+
+void Particle_filter::_reuse_particles() {
+    vector<Particle> valid_particles;
+    const cell_world::Cell &_prey_cell = prey.public_state().cell;
+    const cell_world::Cell & _predator_cell= predator.public_state().cell;
+    for (auto &particle: particles){
+        model.set_public_state(particle.public_state);
+        predator.set_internal_state(particle.internal_state);
+        prey.move = trajectory[trajectory.size()-1];
+        model.update(); // prey move
+        if (data.visibility[_prey_cell].contains(_predator_cell)) {
+            continue;
+        }
+        model.update(); // predator move
+        if (data.visibility[_prey_cell].contains(_predator_cell)) {
+            continue;
+        }
+        valid_particles.emplace_back(model.state.public_state, predator.internal_state());
+    }
+    particles = valid_particles;
+}
+
 
 const cell_world::Cell &Particle_filter::Prey::start_episode() {
     return start_cell;
@@ -135,7 +159,7 @@ cell_world::Agent_status_code Particle_filter::Prey::update_state(const Model_pu
 Particle_filter::Prey::Prey(const Cell &start_cell):
     start_cell(start_cell){}
 
-Particle::Particle(const cell_world::Agent_public_state &public_state, const Predator_state &internal_state):
+Particle::Particle(const cell_world::Model_public_state &public_state, const Predator_state &internal_state):
     public_state(public_state),
     internal_state(internal_state){
 }

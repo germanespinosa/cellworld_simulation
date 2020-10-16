@@ -4,6 +4,7 @@
 #include <predator.h>
 #include <json_cpp.h>
 #include <sstream>
+#include <simulation.h>
 
 using namespace cell_world;
 using namespace std;
@@ -14,23 +15,11 @@ TEST_CASE("test predator parameters"){
     Web_resource::from("predator").key("aggressive").get() >> p;
     CHECK(p.randomness == 0);
     CHECK(p.speed == 1.5);
-    CHECK(p.start == Coordinates{-7,7});
 }
-
-vector<Map_symbol> gradient(Map_symbol_color fg, Map_symbol_color bg){
-    vector<Map_symbol> g;
-    g.emplace_back(32, fg, bg);
-    g.emplace_back(9617, fg, bg);
-    g.emplace_back(9618, fg, bg);
-    g.emplace_back(9619, fg, bg);
-    g.emplace_back(9608, fg, bg);
-    return g;
-}
-
 
 TEST_CASE("gradient") {
-    auto g = gradient(Blue,White);
-    for (auto u:g) cout << u;
+//    auto g = gradient(Blue,White);
+//    for (auto u:g) cout << u;
 }
 
 TEST_CASE("search_tree"){
@@ -45,7 +34,7 @@ TEST_CASE("search_tree"){
     Cell_group cells = world.create_cell_group();
     Map map (cells);
 
-    Search_tree st(graph, paths, map[{0, -7}], 50);
+    Search_tree st(graph, paths, map[{0, -7}], 50, Search_tree::ucb1);
     CHECK(st.root.options_cells.size() == 8);
     auto o = st.get_option();
     int i=0;
@@ -57,4 +46,9 @@ TEST_CASE("search_tree"){
     }
     auto o2 = st.get_best_option();
     CHECK(o==o2);
+}
+
+TEST_CASE("format result file") {
+    CHECK(Simulation::format("simulation_result_%d", 30) == "simulation_result_30");
+    CHECK(Simulation::format("simulation_result_%d_here", 15000) == "simulation_result_15000_here");
 }

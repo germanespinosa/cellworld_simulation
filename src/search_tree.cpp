@@ -23,12 +23,18 @@ Search_tree_node::Search_tree_node(
         }
 
 
-Search_tree::Search_tree(const Graph &graph, const Paths &paths, const Cell &cell, unsigned int remaining_steps) :
+Search_tree::Search_tree(
+        const Graph &graph,
+        const Paths &paths,
+        const Cell &cell,
+        unsigned int remaining_steps,
+        Mode mode) :
         graph(graph),
         paths(paths),
         remaining_steps(remaining_steps),
         root(cell,remaining_steps),
-        _current(&root){
+        _current(&root),
+        mode(mode){
     _load_current();
 }
 
@@ -49,10 +55,14 @@ void Search_tree::_load_current() {
 }
 
 const Cell &Search_tree::get_option() {
-    auto reward_chances = Chance::get_chances(_current->options_reward,-50,150);
-    auto visit_chances = Chance::invert_chances(_current->options_visits);
-    auto chances = Chance::combine_chances(reward_chances,visit_chances);
-    _current = &(_current->options[Chance::pick(chances)]);
+    if (mode == mcts) {
+        _current = &pick_random(_current->options);
+    } else {
+        auto reward_chances = Chance::get_chances(_current->options_reward, -50, 150);
+        auto visit_chances = Chance::invert_chances(_current->options_visits);
+        auto chances = Chance::combine_chances(reward_chances, visit_chances);
+        _current = &(_current->options[Chance::pick(chances)]);
+    }
     _load_current();
     return _current->cell;
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <cell_world.h>
 
 struct Search_tree_node{
@@ -20,10 +21,15 @@ private:
 };
 
 struct Search_tree {
+    enum Mode{
+        mcts,
+        ucb1
+    };
     Search_tree(const cell_world::Graph &,
                      const cell_world::Paths &,
                      const cell_world::Cell &,
-                     unsigned int);
+                     unsigned int,
+                     Mode );
 
     void record_reward(double);
     const cell_world::Cell &get_best_option();
@@ -36,8 +42,9 @@ struct Search_tree {
     unsigned int remaining_steps;
     Search_tree_node root;
     Search_tree_node *_current;
-
     double estimated_reward;
+    Mode mode;
+
 private:
     void _load_current();
 };

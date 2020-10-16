@@ -29,12 +29,14 @@ struct Poi_prey_state : cell_world::Agent_internal_state {
     cell_world::Coordinates option;
     cell_world::Cell_group belief_state;
     double estimated_reward;
+    std::string tree_mode;
     Json_object_members({
         Add_member(status);
         Add_member(move);
         Add_member(coordinates);
         Add_member(option);
         Add_member(estimated_reward);
+        Add_member(tree_mode);
     })
 };
 

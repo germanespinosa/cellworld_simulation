@@ -12,7 +12,7 @@ Simulation::Simulation(Simulation_parameters &sp) :
             sp.path_type),
     model (data.cells),
     prey (sp.prey, sp.planner, sp.particle_filter, sp.predator, data),
-    predator (sp.predator, data)
+    predator (sp.predator, sp.predator_location, data)
 {
     model.add_agent(prey);
     if (sp.predator_present) {
@@ -62,14 +62,17 @@ unsigned int Simulation::run() {
             journal.emplace_back(model.state.public_state,
                                  prey.internal_state(),
                                  predator.internal_state());
-            show_map();
+            //show_map();
         } while (model.update());
-        show_map();
+        //show_map();
         journal.emplace_back(model.state.public_state,
                              prey.internal_state(),
                              predator.internal_state());
         model.end_episode();
-        cout << journal;
+        ofstream result_file;
+        result_file.open (format(parameters.result_file, seed));
+        result_file << journal;
+        result_file.close();
     }
     return 1;
 }
@@ -123,5 +126,12 @@ void Simulation::show_map() {
         sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
         cout << sm << endl;
     }
+}
+
+std::string Simulation::format(const string &format_string, unsigned int seed) {
+    char buff[255];
+    snprintf(buff, sizeof(buff), format_string.c_str(), seed);
+    std::string buffAsStdStr = buff;
+    return buffAsStdStr;
 }
 

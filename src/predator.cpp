@@ -5,13 +5,25 @@ using namespace std;
 
 Predator::Predator(
         const Predator_parameters &parameters,
+        const cell_world::Coordinates start_cell,
         const Static_data &data):
         parameters(parameters),
         data(data),
-        start_cell(data.map[parameters.start]){
+        start_cell(data.map[start_cell]){
     _speed_base = (unsigned int)parameters.speed;
     _speed_overflow = parameters.speed - (double)_speed_base;
 }
+
+Predator::Predator(
+        const Predator_parameters &parameters,
+        const Static_data &data):
+        parameters(parameters),
+        data(data){
+    start_cell = data.cells.free_cells()[0];
+    _speed_base = (unsigned int)parameters.speed;
+    _speed_overflow = parameters.speed - (double)_speed_base;
+}
+
 
 const Cell &Predator::start_episode() {
     internal_state().goal = start_cell;

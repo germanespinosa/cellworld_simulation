@@ -1,12 +1,15 @@
 #include <reward.h>
 #include <particle_filter.h>
+#include <search_tree.h>
 
 struct Planner_parameters : json_cpp::Json_object {
     unsigned int roll_outs;
     Reward reward;
+    std::string tree_mode;
     Json_object_members({
                             Add_member(roll_outs);
                             Add_member(reward);
+                            Add_member(tree_mode);
                         })
 };
 
@@ -54,4 +57,5 @@ struct Planner{
     cell_world::Model model;
     Panner_prey prey;
     Predator predator;
+    Search_tree::Mode tree_mode;
 };

@@ -1,6 +1,4 @@
 #include <planner.h>
-#include <search_tree.h>
-#include <cell_world_tools.h>
 
 using namespace cell_world;
 using namespace std;
@@ -25,6 +23,11 @@ Planner::Planner(const Planner_parameters &parameters,
     model.add_agent(prey);
     model.add_agent(predator);
     model.start_episode();
+    if (parameters.tree_mode == "mcts"){
+        tree_mode = Search_tree::mcts;
+    } else {
+        tree_mode = Search_tree::ucb1;
+    }
 }
 
 Move Planner::get_best_move(const Model_public_state &state,
@@ -55,7 +58,7 @@ Move Planner::get_best_move(const Model_public_state &state,
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
 
-    Search_tree tree (data.pois_graph,data.paths,prey_cell, model.state.public_state.iterations - prey_sate.iteration);
+    Search_tree tree (data.pois_graph,data.paths,prey_cell, model.state.public_state.iterations - prey_sate.iteration, tree_mode);
 
     for (unsigned int t = 0; t < parameters.roll_outs; t++){
         // if the planner has particles it uses it
@@ -64,7 +67,6 @@ Move Planner::get_best_move(const Model_public_state &state,
         if (particle_count) mps.agents_state[1] = pick_random(filter.particles).public_state.agents_state[1];
         model.set_public_state(mps);
 
-        unsigned int option_index = pick_random_index (options);
         // selects an option stochastically with probability proportional
         // to reward and inversely proportional to previous visits
         tree.rewind();

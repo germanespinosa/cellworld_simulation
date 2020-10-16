@@ -3,11 +3,9 @@
 #include <static_data.h>
 
 struct Predator_parameters :json_cpp::Json_object{
-    cell_world::Coordinates start;
     double speed;
     double randomness;
     Json_object_members({
-        Add_member(start);
         Add_member(speed);
         Add_member(randomness);
     });
@@ -19,6 +17,7 @@ struct Predator_state : cell_world::Agent_internal_state {
 };
 
 struct Predator : cell_world::Stateful_agent<Predator_state> {
+    Predator (const Predator_parameters &, const cell_world::Coordinates, const Static_data &);
     Predator (const Predator_parameters &, const Static_data &);
     const cell_world::Cell &start_episode() override;
     cell_world::Move get_move(const cell_world::Model_public_state &) override;

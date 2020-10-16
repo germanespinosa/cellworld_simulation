@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="cellworld_simulation" targetName="cellworld_simulation_tests" />
+      <config projectName="cellworld_simulation" targetName="cellworld_run" />
+      <config projectName="cellworld_simulation" targetName="cellworld_simulation" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="be8ce467-7335-4b56-99ea-6408208cd34a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/catchtests/simulation_tests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/catchtests/simulation_tests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/planner.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/planner.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/poi_prey.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/poi_prey.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/predator.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/predator.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/search_tree.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/search_tree.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/simulation.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/simulation.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/planner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/planner.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/predator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/predator.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/search_tree.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/search_tree.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/simulation.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/simulation.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/cmake-build-debug/result.json" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="OCResolveContextSettings">
+    <option name="configuration" value="0-Debug-cellworld_simulation" />
+  </component>
+  <component name="ProjectId" id="1iv4MlP4GP3TOLc2bBulXbjp8dR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/CMakeLists.txt" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C/C++" />
+  </component>
+  <component name="RunManager" selected="CMake Application.cellworld_run">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cellworld_run" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-id &quot;test 1&quot; -world &quot;world_5_5&quot; -path_type &quot;astar&quot; -particle_filter 500 -prey standard -predator &quot;aggressive&quot; -planner &quot;5000-max-survival&quot; -predator_present 1 -seeds &quot;[1,2,3,4,5]&quot; -predator_location {\&quot;x\&quot;:7,\&quot;y\&quot;:7} -result_file &quot;result_%d.json&quot;" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cellworld_simulation" TARGET_NAME="cellworld_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cellworld_simulation" RUN_TARGET_NAME="cellworld_run">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cellworld_simulation" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cellworld_simulation" TARGET_NAME="cellworld_simulation" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cellworld_simulation_tests" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="cellworld_simulation" TARGET_NAME="cellworld_simulation_tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="cellworld_simulation" RUN_TARGET_NAME="cellworld_simulation_tests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.cellworld_run" />
+      <item itemvalue="CMake Application.cellworld_simulation" />
+      <item itemvalue="CMake Application.cellworld_simulation_tests" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="be8ce467-7335-4b56-99ea-6408208cd34a" name="Default Changelist" comment="" />
+      <created>1602774686057</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1602774686057</updated>
+      <workItem from="1602774687291" duration="15448000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="162" y="226" width="1507" height="573" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602795655295">
+      <screen x="0" y="627" width="1920" height="573" />
+    </state>
+    <state x="162" y="226" width="1507" height="573" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602795655295" />
+    <state width="632" height="569" key="DebuggerActiveHint" timestamp="1602778063405">
+      <screen x="0" y="627" width="1920" height="573" />
+    </state>
+    <state width="632" height="569" key="DebuggerActiveHint/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602778063405" />
+    <state x="592" y="226" width="636" height="580" key="FileChooserDialogImpl" timestamp="1602777874091">
+      <screen x="0" y="627" width="1920" height="573" />
+    </state>
+    <state x="592" y="226" width="636" height="580" key="FileChooserDialogImpl/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602777874091" />
+    <state width="1848" height="294" key="GridCell.Tab.0.bottom" timestamp="1602878118401">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="294" key="GridCell.Tab.0.bottom/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602800799761" />
+    <state width="1848" height="294" key="GridCell.Tab.0.bottom/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118401" />
+    <state width="1848" height="294" key="GridCell.Tab.0.center" timestamp="1602878118400">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="294" key="GridCell.Tab.0.center/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602800799761" />
+    <state width="1848" height="294" key="GridCell.Tab.0.center/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118400" />
+    <state width="1848" height="294" key="GridCell.Tab.0.left" timestamp="1602878118400">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="294" key="GridCell.Tab.0.left/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602800799761" />
+    <state width="1848" height="294" key="GridCell.Tab.0.left/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118400" />
+    <state width="1848" height="294" key="GridCell.Tab.0.right" timestamp="1602878118400">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="294" key="GridCell.Tab.0.right/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602800799761" />
+    <state width="1848" height="294" key="GridCell.Tab.0.right/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118400" />
+    <state width="1848" height="367" key="GridCell.Tab.1.bottom" timestamp="1602878118389">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="367" key="GridCell.Tab.1.bottom/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602781626560" />
+    <state width="1848" height="367" key="GridCell.Tab.1.bottom/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118389" />
+    <state width="1848" height="367" key="GridCell.Tab.1.center" timestamp="1602878118387">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="367" key="GridCell.Tab.1.center/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602781626560" />
+    <state width="1848" height="367" key="GridCell.Tab.1.center/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118387" />
+    <state width="1848" height="367" key="GridCell.Tab.1.left" timestamp="1602878118386">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="367" key="GridCell.Tab.1.left/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602781626560" />
+    <state width="1848" height="367" key="GridCell.Tab.1.left/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118386" />
+    <state width="1848" height="367" key="GridCell.Tab.1.right" timestamp="1602878118387">
+      <screen x="72" y="0" width="1848" height="1200" />
+    </state>
+    <state width="1848" height="367" key="GridCell.Tab.1.right/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602781626560" />
+    <state width="1848" height="367" key="GridCell.Tab.1.right/1920.600.1600.900/3520.106.1920.1080/72.0.1848.1200@72.0.1848.1200" timestamp="1602878118387" />
+    <state x="285" y="256" width="1542" height="840" key="SettingsEditor" timestamp="1602778567559">
+      <screen x="0" y="627" width="1920" height="573" />
+    </state>
+    <state x="285" y="256" width="1542" height="840" key="SettingsEditor/1920.600.1600.900/3520.106.1920.1080/0.627.1920.573@0.627.1920.573" timestamp="1602778567559" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/simulation.cpp</url>
+          <line>16</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

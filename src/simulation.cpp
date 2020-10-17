@@ -28,9 +28,9 @@ struct Predator_data {
 
 };
 
-struct Data : json_cpp::Json_object{
-    Data () = default;
-    Data (Model_public_state &state,
+struct Step : json_cpp::Json_object{
+    Step () = default;
+    Step (Model_public_state &state,
           Poi_prey_state & prey_state,
           Predator_state & predator_state) :
             iteration(state.agents_state[0].iteration),
@@ -53,25 +53,39 @@ struct Data : json_cpp::Json_object{
 };
 
 
+struct Episode : json_cpp::Json_object{
+    unsigned int iterations;
+    unsigned int result;
+    json_cpp::Json_vector<Step> steps;
+    Json_object_members({
+        Add_member(iterations);
+        Add_member(result);
+        Add_member(steps);
+    })
+};
+
+
 unsigned int Simulation::run() {
     for (auto seed:parameters.seeds) {
+        Episode episode;
         srand(seed);
         model.start_episode();
-        Json_vector<Data> journal;
         do {
-            journal.emplace_back(model.state.public_state,
+            episode.steps.emplace_back(model.state.public_state,
                                  prey.internal_state(),
                                  predator.internal_state());
             //show_map();
         } while (model.update());
         //show_map();
-        journal.emplace_back(model.state.public_state,
+        episode.steps.emplace_back(model.state.public_state,
                              prey.internal_state(),
                              predator.internal_state());
+        episode.result = prey.goal == prey.public_state().cell;
+        episode.iterations = prey.public_state().iteration;
         model.end_episode();
         ofstream result_file;
         result_file.open (format(parameters.result_file, seed));
-        result_file << journal;
+        result_file << episode;
         result_file.close();
     }
     return 1;

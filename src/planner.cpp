@@ -11,6 +11,7 @@ Planner::Planner(const Planner_parameters &parameters,
                  const Cell &goal) :
         parameters(parameters),
         data(data),
+        options_graph(parameters.use_pois ? data.pois_graph : data.world_graph),
         filter(filter_parameters,
                predator_parameters,
                data,
@@ -55,10 +56,13 @@ Move Planner::get_best_move(const Model_public_state &state,
 
 
     Cell_group options = get_valid_options(current_cell,state.agents_state[0].iteration);
+    if (options.empty()){
+        return {0,0};
+    }
     vector<double> options_rewards_acum(options.size(),0);
     vector<unsigned int> options_counters(options.size(),0);
 
-    Search_tree tree (data.pois_graph,data.paths,prey_cell, model.state.public_state.iterations - prey_sate.iteration, tree_mode);
+    Search_tree tree (options_graph, data.paths, prey_cell, model.state.public_state.iterations - prey_sate.iteration, tree_mode);
 
     for (unsigned int t = 0; t < parameters.roll_outs; t++){
         // if the planner has particles it uses it
@@ -112,7 +116,7 @@ cell_world::Agent_status_code Planner::update_state(const Model_public_state &st
 
 cell_world::Cell_group Planner::get_valid_options(const Cell &cell, unsigned int iteration) const {
     unsigned int remaining_steps = model.state.public_state.iterations - iteration;
-    Cell_group options = data.pois_graph[cell];
+    Cell_group options = options_graph[cell];
     Cell_group valid_options;
     for (auto &option:options){
         int min_steps_to_goal = data.paths.get_steps(cell,option) + data.paths.get_steps(option,prey.goal);

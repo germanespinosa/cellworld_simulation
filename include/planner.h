@@ -6,10 +6,12 @@ struct Planner_parameters : json_cpp::Json_object {
     unsigned int roll_outs;
     Reward reward;
     std::string tree_mode;
+    bool use_pois;
     Json_object_members({
                             Add_member(roll_outs);
                             Add_member(reward);
                             Add_member(tree_mode);
+                            Add_member(use_pois);
                         })
 };
 
@@ -52,10 +54,12 @@ struct Planner{
     const Planner_parameters &parameters;
     const Static_data &data;
 
+    const cell_world::Graph options_graph;
     cell_world::Coordinates option;
     Particle_filter filter;
     cell_world::Model model;
     Panner_prey prey;
     Predator predator;
     Search_tree::Mode tree_mode;
+    bool use_pois;
 };

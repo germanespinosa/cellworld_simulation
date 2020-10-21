@@ -67,6 +67,15 @@ struct Episode : json_cpp::Json_object{
 
 unsigned int Simulation::run() {
     for (auto seed:parameters.seeds) {
+        string output_file = format(parameters.result_file, seed);
+        {
+            ifstream test_stream(output_file);
+            if (test_stream.good()) {
+                // the output file exists
+                // do not perform the simulation
+                continue;
+            }
+        }
         Episode episode;
         srand(seed);
         model.start_episode();
@@ -84,7 +93,7 @@ unsigned int Simulation::run() {
         episode.iterations = prey.public_state().iteration;
         model.end_episode();
         ofstream result_file;
-        result_file.open (format(parameters.result_file, seed));
+        result_file.open (output_file);
         result_file << episode;
         result_file.close();
     }

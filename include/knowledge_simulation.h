@@ -14,9 +14,9 @@ struct Knowledge_simulation_parameters : cell_world::Parameters_builder {
     Particle_filter_parameters particle_filter;
     Predator_parameters predator;
     cell_world::Coordinates predator_location;
-    json_cpp::Json_vector<unsigned int> seeds;
-    cell_world::Coordinates start;
+    cell_world::Coordinates prey_location;
     cell_world::Coordinates goal;
+    json_cpp::Json_vector<unsigned int> seeds;
     unsigned int steps;
     std::string knowledge_file;
     std::string result_file;
@@ -27,12 +27,12 @@ struct Knowledge_simulation_parameters : cell_world::Parameters_builder {
                                Add_web_resource(particle_filter,({"particle_filter"}));
                                Add_web_resource(predator,({"predator"}));
                                Add_value(predator_location);
+                               Add_value(prey_location);
+                               Add_value(goal);
                                Add_value(seeds);
                                Add_value(knowledge_file);
                                Add_value(result_file);
-                               Add_member(start);
-                               Add_member(goal);
-                               Add_member(steps);
+                               Add_value(steps);
                            })
 };
 

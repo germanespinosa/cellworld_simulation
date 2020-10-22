@@ -44,7 +44,7 @@ cell_world::Move Knowledge_prey::get_move(const Model_public_state &state) {
 }
 
 const cell_world::Cell &Knowledge_prey::start_episode() {
-    return Agent_base::start_episode();
+    return start;
 }
 
 Knowledge_prey::Knowledge_prey(const cell_world::Coordinates &start_coordinates,

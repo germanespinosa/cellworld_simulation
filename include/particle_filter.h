@@ -36,8 +36,8 @@ struct Particle_filter {
     Particle_filter(const Particle_filter_parameters &,
                     const Predator_parameters &,
                     const Static_data &,
-                    const cell_world::Cell &start,
-                    const cell_world::Cell &goal);
+                    const cell_world::Cell &,
+                    const cell_world::Cell &);
 
     int create_particles ();
     void record_observation(const cell_world::Model_public_state &state);

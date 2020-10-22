@@ -17,7 +17,12 @@ set (cellworld_simulation_files
         src/particle_filter.cpp
         src/reward.cpp
         src/static_data.cpp
-        src/search_tree.cpp)
+        src/search_tree.cpp
+        src/training_prey.cpp
+        src/training.cpp
+        src/off_line_knowledge.cpp
+        src/knowledge_simulation.cpp
+        src/knowledge_prey.cpp)
 
 add_library( cellworld_simulation ${cellworld_simulation_files})
 
@@ -29,6 +34,13 @@ target_include_directories(cellworld_simulation
 
 add_executable(cellworld_run src/run.cpp)
 target_link_libraries( cellworld_run  cellworld_simulation)
+
+add_executable(cellworld_train src/train.cpp)
+target_link_libraries( cellworld_train  cellworld_simulation)
+
+add_executable(cellworld_krun src/knowledge_run.cpp)
+target_link_libraries( cellworld_krun  cellworld_simulation)
+
 
 ###
 ### TESTS
@@ -46,5 +58,12 @@ if (CMAKE_BUILD_TYPE MATCHES Release)
 
     install(TARGETS cellworld_run
             RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+    install(TARGETS cellworld_krun
+            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+    install(TARGETS cellworld_train
+            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
+
 
 endif()

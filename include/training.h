@@ -11,7 +11,6 @@ struct Training_parameters : cell_world::Parameters_builder {
     cell_world::World world;
     std::string path_type;
     Predator_parameters predator;
-    cell_world::Coordinates predator_location;
     cell_world::Coordinates goal;
     unsigned int episodes;
     std::string input_file;
@@ -20,7 +19,6 @@ struct Training_parameters : cell_world::Parameters_builder {
                                Add_web_resource(world, ({"world"}));
                                Add_value(path_type);
                                Add_web_resource(predator,({"predator"}));
-                               Add_value(predator_location);
                                Add_value(goal);
                                Add_value(episodes);
                                Add_value(input_file);

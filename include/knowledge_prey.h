@@ -25,8 +25,8 @@ struct Knowledge_prey_state : cell_world::Agent_internal_state {
 };
 
 struct Knowledge_prey : cell_world::Stateful_agent<Knowledge_prey_state> {
-    Knowledge_prey(const cell_world::Coordinates &,
-                   const cell_world::Coordinates &,
+    Knowledge_prey(const cell_world::Cell &,
+                   const cell_world::Cell &,
                    const Particle_filter_parameters &,
                    const Predator_parameters &,
                    const Static_data &,

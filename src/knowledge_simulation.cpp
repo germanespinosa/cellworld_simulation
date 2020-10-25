@@ -11,7 +11,7 @@ Knowledge_simulation::Knowledge_simulation(Knowledge_simulation_parameters &para
                 parameters.world,
                 parameters.path_type),
         model (data.cells),
-        prey (parameters.prey_location, parameters.goal, parameters.particle_filter, parameters.predator, data, parameters.knowledge_file),
+        prey (data.map[parameters.prey_location], data.map[parameters.goal], parameters.particle_filter, parameters.predator, data, parameters.knowledge_file),
         predator (parameters.predator, parameters.predator_location, data)
 {
     model.add_agent(prey);

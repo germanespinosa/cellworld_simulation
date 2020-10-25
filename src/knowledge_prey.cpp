@@ -22,10 +22,11 @@ Agent_status_code Knowledge_prey::update_state(const cell_world::Model_public_st
 cell_world::Move Knowledge_prey::get_move(const Model_public_state &state) {
     auto &prey_cell = state.agents_state[0].cell;
     auto &predator_cell = state.agents_state[1].cell;
+    if (prey_cell == predator_cell) return {0,0};
     bool contact = data.visibility[prey_cell].contains(predator_cell);
     if (contact) {
         filter.record_observation(state);
-        return knowledge_map.get_move(state);
+        internal_state().move = knowledge_map.get_move(state);
     } else {
         filter.create_particles();
         unsigned int destination_count = data.world_graph[prey_cell].size();
@@ -38,24 +39,25 @@ cell_world::Move Knowledge_prey::get_move(const Model_public_state &state) {
         }
         unsigned int destination_index = Chance::pick_best(1,rewards);
         auto &destination = data.world_graph[prey_cell][destination_index];
-        auto move = destination.coordinates - prey_cell.coordinates;
-        return move;
+        internal_state().move = destination.coordinates - prey_cell.coordinates;
     }
+    filter.trajectory.push_back(internal_state().move);
+    return internal_state().move;
 }
 
 const cell_world::Cell &Knowledge_prey::start_episode() {
     return start;
 }
 
-Knowledge_prey::Knowledge_prey(const cell_world::Coordinates &start_coordinates,
-                               const cell_world::Coordinates &goal_coordinates,
+Knowledge_prey::Knowledge_prey(const cell_world::Cell &start,
+                               const cell_world::Cell &goal,
                                const Particle_filter_parameters &filter_parameters,
                                const Predator_parameters &predator_parameters,
                                const Static_data &data,
                                const std::string &knowledge_file) :
          data(data),
-         start(data.map[start_coordinates]),
-         goal(data.map[goal_coordinates]),
+         start(start),
+         goal(goal),
          filter(filter_parameters,
                 predator_parameters,
                 data,

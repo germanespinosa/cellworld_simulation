@@ -7,7 +7,7 @@ struct Search_tree_node{
                      unsigned int);
     cell_world::Cell_group options_cells;
     std::vector<Search_tree_node> options;
-    std::vector<double> options_reward;
+    std::vector<float> options_reward;
     std::vector<unsigned int> options_visits;
     Search_tree_node &parent;
 
@@ -31,7 +31,7 @@ struct Search_tree {
                      unsigned int,
                      Mode );
 
-    void record_reward(double);
+    void record_reward(float);
     const cell_world::Cell &get_best_option();
     void rewind();
     bool finished();
@@ -42,7 +42,7 @@ struct Search_tree {
     unsigned int remaining_steps;
     Search_tree_node root;
     Search_tree_node *_current;
-    double estimated_reward;
+    float estimated_reward;
     Mode mode;
 
 private:

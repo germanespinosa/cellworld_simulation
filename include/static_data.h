@@ -2,8 +2,9 @@
 #include <cell_world.h>
 
 struct Static_data{
-    Static_data(cell_world::World &world,
-                std::string path_type );
+    Static_data( cell_world::World_info world_info,
+                 std::string path_type);
+    const cell_world::World world;
     const cell_world::Graph world_graph;
     const cell_world::Cell_group &cells;
     const cell_world::Map map;

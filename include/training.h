@@ -1,29 +1,19 @@
 #pragma once
 #include <cell_world.h>
-#include <cell_world_tools.h>
 #include <static_data.h>
 #include <reward.h>
 #include <predator.h>
 #include <training_prey.h>
 
 
-struct Training_parameters : cell_world::Parameters_builder {
-    cell_world::World world;
+struct Training_parameters {
+    cell_world::World_info world_info;
     std::string path_type;
     Predator_parameters predator;
     cell_world::Coordinates goal;
     unsigned int episodes;
     std::string input_file;
     std::string output_file;
-    Parameters_definitions({
-                               Add_web_resource(world, ({"world"}));
-                               Add_value(path_type);
-                               Add_web_resource(predator,({"predator"}));
-                               Add_value(goal);
-                               Add_value(episodes);
-                               Add_value(input_file);
-                               Add_value(output_file);
-                           })
 };
 
 struct Training {

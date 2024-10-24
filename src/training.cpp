@@ -7,7 +7,7 @@ using namespace std;
 Training::Training(Training_parameters &sp) :
         parameters(sp),
         data (
-                sp.world,
+                sp.world_info,
                 sp.path_type),
         model (data.cells),
         prey (data,

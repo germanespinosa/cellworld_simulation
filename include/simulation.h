@@ -1,15 +1,14 @@
 #pragma once
 #include <cell_world.h>
-#include <cell_world_tools.h>
 #include <static_data.h>
 #include <reward.h>
 #include <predator.h>
 #include <poi_prey.h>
 
 
-struct Simulation_parameters : cell_world::Parameters_builder {
+struct Simulation_parameters {
     std::string id;
-    cell_world::World world;
+    cell_world::World_info world_info;
     std::string path_type;
     Planner_parameters planner;
     Particle_filter_parameters particle_filter;
@@ -19,19 +18,6 @@ struct Simulation_parameters : cell_world::Parameters_builder {
     json_cpp::Json_vector<unsigned int> seeds;
     bool predator_present;
     std::string result_file;
-    Parameters_definitions({
-        Add_value(id);
-        Add_web_resource(world, ({"world"}));
-        Add_value(path_type);
-        Add_web_resource(planner,({"planner"}));
-        Add_web_resource(particle_filter,({"particle_filter"}));
-        Add_web_resource(prey,({"prey"}));
-        Add_web_resource(predator,({"predator"}));
-        Add_value(predator_location);
-        Add_value(seeds);
-        Add_value(predator_present);
-        Add_value(result_file);
-   })
 };
 
 struct Simulation {

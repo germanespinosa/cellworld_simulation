@@ -30,7 +30,7 @@ cell_world::Move Knowledge_prey::get_move(const Model_public_state &state) {
     } else {
         filter.create_particles();
         unsigned int destination_count = data.world_graph[prey_cell].size();
-        vector<double> rewards = vector<double>(destination_count);
+        vector<float> rewards = vector<float>(destination_count);
         for (auto &particle: filter.particles) {
             auto &particle_rewards = knowledge_map.get_rewards(particle.public_state);
             for (unsigned int index=0; index < destination_count; index++){

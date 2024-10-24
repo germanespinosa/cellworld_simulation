@@ -1,15 +1,13 @@
 #include <knowledge_simulation.h>
-#include <cell_world_tools.h>
+#include <cell_world.h>
+#include <map_symbols.h>
 
-using namespace cell_world;
 using namespace json_cpp;
 using namespace std;
 
 Knowledge_simulation::Knowledge_simulation(Knowledge_simulation_parameters &parameters):
         parameters(parameters),
-        data (
-                parameters.world,
-                parameters.path_type),
+        data (parameters.world_info, parameters.path_type),
         model (data.cells),
         prey (data.map[parameters.prey_location], data.map[parameters.goal], parameters.particle_filter, parameters.predator, data, parameters.knowledge_file),
         predator (parameters.predator, parameters.predator_location, data)
@@ -19,13 +17,13 @@ Knowledge_simulation::Knowledge_simulation(Knowledge_simulation_parameters &para
 }
 
 struct Predator_data {
-    Coordinates coordinates;
+    cell_world::Coordinates coordinates;
 
 };
 
 struct Step : json_cpp::Json_object{
     Step () = default;
-    Step (Model_public_state &state,
+    Step (cell_world::Model_public_state &state,
           Knowledge_prey_state & prey_state,
           Predator_state & predator_state) :
             iteration(state.agents_state[0].iteration),
@@ -34,8 +32,8 @@ struct Step : json_cpp::Json_object{
             prey_state(prey_state),
             predator_state(predator_state){}
     unsigned int iteration;
-    Coordinates prey;
-    Coordinates predator;
+    cell_world::Coordinates prey;
+    cell_world::Coordinates predator;
     Knowledge_prey_state prey_state;
     Predator_state predator_state;
     Json_object_members({
@@ -107,11 +105,11 @@ vector<Map_symbol> gradient(Map_symbol_color fg, Map_symbol_color bg){
     return g;
 }
 
-vector<Coordinates_list> beliefs(Belief_state bs, unsigned int groups){
+vector<cell_world::Coordinates_list> beliefs(Belief_state bs, unsigned int groups){
     unsigned  int max=0;
     for (auto b:bs.hits) max=b>max?b:max;
     unsigned int div = max / groups + 1;
-    vector<Coordinates_list> bg (groups);
+    vector<cell_world::Coordinates_list> bg (groups);
     for (unsigned int i=0; i<bs.hits.size() ; i++){
         unsigned int index = bs.hits[i]/div;
         bg[index].push_back(bs.particles_coordinates[i]);
@@ -120,29 +118,29 @@ vector<Coordinates_list> beliefs(Belief_state bs, unsigned int groups){
 }
 
 void Knowledge_simulation::show_map() {
-    if (model.state.public_state.current_turn){
-        Screen_map sm (data.map);
-        auto &prey_cell = prey.public_state().cell;
-        auto &prey_move = prey.internal_state().move;
-        auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
-        auto &predator_cell = model.state.public_state.agents_state[1].cell;
-        auto &prey_visibility = data.visibility[prey_prev];
-        auto belief_state_grouped = beliefs(prey.filter.get_belief_state(), 4);
-        if (prey_visibility.contains(predator_cell)) {
-            sm.add_special_cell(predator_cell, ms.two.front(Blue).back(Yellow));
-        }
-        sm.add_special_cell(prey_prev,ms.one.front(Red));
-        sm.add_group(prey_visibility, ms.clear.back(Yellow));
-
-        auto g = gradient(Blue,White);
-        sm.add_group(belief_state_grouped[0],g[0]);
-        sm.add_group(belief_state_grouped[1],g[1]);
-        sm.add_group(belief_state_grouped[2],g[2]);
-        sm.add_group(belief_state_grouped[3],g[3]);
-
-        sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
-        cout << sm << endl;
-    }
+    // if (model.state.public_state.current_turn){
+    //     Screen_map sm (data.map);
+    //     auto &prey_cell = prey.public_state().cell;
+    //     auto &prey_move = prey.internal_state().move;
+    //     auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
+    //     auto &predator_cell = model.state.public_state.agents_state[1].cell;
+    //     auto &prey_visibility = data.visibility[prey_prev];
+    //     auto belief_state_grouped = beliefs(prey.filter.get_belief_state(), 4);
+    //     if (prey_visibility.contains(predator_cell)) {
+    //         sm.add_special_cell(predator_cell, ms.two.front(Blue).back(Yellow));
+    //     }
+    //     sm.add_special_cell(prey_prev,ms.one.front(Red));
+    //     sm.add_group(prey_visibility, ms.clear.back(Yellow));
+    //
+    //     auto g = gradient(Blue,White);
+    //     sm.add_group(belief_state_grouped[0],g[0]);
+    //     sm.add_group(belief_state_grouped[1],g[1]);
+    //     sm.add_group(belief_state_grouped[2],g[2]);
+    //     sm.add_group(belief_state_grouped[3],g[3]);
+    //
+    //     sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
+    //     cout << sm << endl;
+    // }
 }
 
 std::string Knowledge_simulation::format(const string &format_string, unsigned int seed) {

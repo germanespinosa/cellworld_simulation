@@ -1,5 +1,6 @@
 #include <simulation.h>
-#include <cell_world_tools.h>
+#include <cell_world.h>
+#include <map_symbols.h>
 
 using namespace cell_world;
 using namespace json_cpp;
@@ -8,7 +9,7 @@ using namespace std;
 Simulation::Simulation(Simulation_parameters &sp) :
     parameters(sp),
     data (
-            sp.world,
+            sp.world_info,
             sp.path_type),
     model (data.cells),
     prey (sp.prey, sp.planner, sp.particle_filter, sp.predator, data),
@@ -28,9 +29,9 @@ struct Predator_data {
 
 };
 
-struct Step : json_cpp::Json_object{
-    Step () = default;
-    Step (Model_public_state &state,
+struct Simulation_step : json_cpp::Json_object{
+    Simulation_step () = default;
+    Simulation_step (Model_public_state &state,
           Poi_prey_state & prey_state,
           Predator_state & predator_state) :
             iteration(state.agents_state[0].iteration),
@@ -53,10 +54,10 @@ struct Step : json_cpp::Json_object{
 };
 
 
-struct Episode : json_cpp::Json_object{
+struct Simulation_episode : json_cpp::Json_object{
     unsigned int iterations;
     unsigned int result;
-    json_cpp::Json_vector<Step> steps;
+    json_cpp::Json_vector<Simulation_step> steps;
     Json_object_members({
         Add_member(iterations);
         Add_member(result);
@@ -76,7 +77,7 @@ unsigned int Simulation::run() {
                 continue;
             }
         }
-        Episode episode;
+        Simulation_episode episode;
         srand(seed);
         model.start_episode();
         do {
@@ -125,30 +126,30 @@ vector<Coordinates_list> beliefs(Belief_state bs, unsigned int groups){
 }
 
 void Simulation::show_map() {
-    if (model.state.public_state.current_turn){
-        Screen_map sm (data.map);
-        auto &prey_cell = prey.public_state().cell;
-        auto &prey_move = prey.internal_state().move;
-        auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
-        auto &predator_cell = model.state.public_state.agents_state[1].cell;
-        auto &prey_visibility = data.visibility[prey_prev];
-        auto belief_state_grouped = beliefs(prey.planner.filter.get_belief_state(), 4);
-        if (prey_visibility.contains(predator_cell)) {
-            sm.add_special_cell(predator_cell, ms.two.front(Blue).back(Yellow));
-        }
-        sm.add_special_cell(prey.internal_state().option, ms.goal.front(Red));
-        sm.add_special_cell(prey_prev,ms.one.front(Red));
-        sm.add_group(prey_visibility, ms.clear.back(Yellow));
-
-        auto g = gradient(Blue,White);
-        sm.add_group(belief_state_grouped[0],g[0]);
-        sm.add_group(belief_state_grouped[1],g[1]);
-        sm.add_group(belief_state_grouped[2],g[2]);
-        sm.add_group(belief_state_grouped[3],g[3]);
-
-        sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
-        cout << sm << endl;
-    }
+    // if (model.state.public_state.current_turn){
+    //     Screen_map sm (data.map);
+    //     auto &prey_cell = prey.public_state().cell;
+    //     auto &prey_move = prey.internal_state().move;
+    //     auto &prey_prev = data.map[prey_cell.coordinates-prey_move];
+    //     auto &predator_cell = model.state.public_state.agents_state[1].cell;
+    //     auto &prey_visibility = data.visibility[prey_prev];
+    //     auto belief_state_grouped = beliefs(prey.planner.filter.get_belief_state(), 4);
+    //     if (prey_visibility.contains(predator_cell)) {
+    //         sm.add_special_cell(predator_cell, ms.two.front(Blue).back(Yellow));
+    //     }
+    //     sm.add_special_cell(prey.internal_state().option, ms.goal.front(Red));
+    //     sm.add_special_cell(prey_prev,ms.one.front(Red));
+    //     sm.add_group(prey_visibility, ms.clear.back(Yellow));
+    //
+    //     auto g = gradient(Blue,White);
+    //     sm.add_group(belief_state_grouped[0],g[0]);
+    //     sm.add_group(belief_state_grouped[1],g[1]);
+    //     sm.add_group(belief_state_grouped[2],g[2]);
+    //     sm.add_group(belief_state_grouped[3],g[3]);
+    //
+    //     sm.add_special_cell(prey_cell, ms.get_direction(prey_move));
+    //     cout << sm << endl;
+    // }
 }
 
 std::string Simulation::format(const string &format_string, unsigned int seed) {

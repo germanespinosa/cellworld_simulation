@@ -7,7 +7,34 @@ project( cellworld_simulation
         DESCRIPTION "Cellworld simulation"
         LANGUAGES CXX)
 
-find_package(Cellworld_tools REQUIRED)
+####
+#### DEPENDENCIES
+####
+
+find_package (Dependencies QUIET)
+
+if (NOT ${Dependencies_FOUND})
+    if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/DependenciesConfig.cmake)
+        file(DOWNLOAD https://raw.githubusercontent.com/germanespinosa/dependencies/main/DependenciesConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/DependenciesConfig.cmake)
+    endif()
+    set(Dependencies_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    find_package (Dependencies REQUIRED)
+endif()
+
+####
+#### END DEPENDENCIES
+####
+
+install_git_dependency( Cellworld
+        https://github.com/cellworld/cellworld
+        CMAKE_PROJECT
+        IMPORT_TARGETS cellworld
+        INCLUDE_DIRECTORIES include)
+
+
+install_git_dependency(Params-cpp https://github.com/cellworld/dependency_params-cpp
+        CMAKE_PROJECT
+        IMPORT_TARGETS params-cpp)
 
 set (cellworld_simulation_files
         src/predator.cpp
@@ -22,11 +49,12 @@ set (cellworld_simulation_files
         src/training.cpp
         src/off_line_knowledge.cpp
         src/knowledge_simulation.cpp
-        src/knowledge_prey.cpp)
+        src/knowledge_prey.cpp
+        src/map_symbols.cpp)
 
 add_library( cellworld_simulation ${cellworld_simulation_files})
 
-target_link_libraries ( cellworld_simulation ${CELLWORLD_TOOLS_LIBRARIES})
+target_link_libraries ( cellworld_simulation cellworld params-cpp)
 
 target_include_directories(cellworld_simulation
         PUBLIC
@@ -46,24 +74,3 @@ target_link_libraries( cellworld_krun  cellworld_simulation)
 ### TESTS
 ###
 find_package(CatchTests CONFIG QUIET)
-
-
-###
-### SIMULATION INSTALLATION
-###
-
-if (CMAKE_BUILD_TYPE MATCHES Release)
-
-    include(GNUInstallDirs)
-
-    install(TARGETS cellworld_run
-            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-    install(TARGETS cellworld_krun
-            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-    install(TARGETS cellworld_train
-            RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
-
-
-endif()

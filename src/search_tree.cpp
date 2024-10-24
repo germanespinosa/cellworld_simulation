@@ -48,7 +48,7 @@ void Search_tree::_load_current() {
                 _current->options.emplace_back(*_current, n, _current->remaining_steps - steps);
             }
         }
-        _current->options_reward = vector<double>(_current->options_cells.size(),0);
+        _current->options_reward = vector<float>(_current->options_cells.size(),0);
         _current->options_visits = vector<unsigned int>(_current->options_cells.size(),0);
         _current->_loaded = true;
     }
@@ -67,7 +67,7 @@ const Cell &Search_tree::get_option() {
     return _current->cell;
 }
 
-void Search_tree::record_reward(double reward) {
+void Search_tree::record_reward(float reward) {
     Search_tree_node *node = _current;
     while (node != &root) {
         auto &cell = node->cell;
